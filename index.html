@@ -60,25 +60,37 @@ body{
   position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
   z-index:20;text-align:center;padding:28px 26px;overflow:hidden;
   background:
-    radial-gradient(120% 90% at 50% 8%, #24301f 0%, #191410 46%, #100e0a 100%);
+    radial-gradient(120% 90% at 50% 8%, #1d2a24 0%, #141b17 46%, #0b0f0c 100%);
 }
 #screen-title::before{
   content:"";position:absolute;inset:0;
   background:
-    radial-gradient(60% 40% at 78% 82%, rgba(192,73,47,.14), transparent 70%),
-    radial-gradient(50% 36% at 20% 24%, rgba(90,148,131,.10), transparent 70%);
+    radial-gradient(60% 40% at 78% 82%, rgba(192,73,47,.10), transparent 70%),
+    radial-gradient(50% 36% at 20% 24%, rgba(90,148,131,.08), transparent 70%);
   pointer-events:none;
 }
-#screen-title .wm{right:-8px;bottom:-40px;font-size:180px;opacity:.5;}
-.title-seal{width:66px;height:66px;font-size:38px;border-radius:14px;margin-bottom:20px;animation:breathe 4.5s ease-in-out infinite;}
-@keyframes breathe{0%,100%{box-shadow:inset 0 0 0 2px rgba(255,255,255,.32),0 6px 26px rgba(192,73,47,.4);}50%{box-shadow:inset 0 0 0 2px rgba(255,255,255,.32),0 6px 40px rgba(192,73,47,.7);}}
+.tac-grid{
+  position:absolute;inset:0;pointer-events:none;opacity:.16;
+  background-image:
+    linear-gradient(rgba(160,180,170,.14) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(160,180,170,.14) 1px, transparent 1px);
+  background-size:34px 34px;
+  -webkit-mask-image:radial-gradient(80% 70% at 50% 45%, #000 30%, transparent 100%);
+  mask-image:radial-gradient(80% 70% at 50% 45%, #000 30%, transparent 100%);
+}
+.tac-corner{position:absolute;width:38px;height:38px;pointer-events:none;border:2px solid var(--cinnabar-2);opacity:.7;}
+.tac-corner.tl{left:14px;top:14px;border-right:none;border-bottom:none;}
+.tac-corner.tr{right:14px;top:14px;border-left:none;border-bottom:none;}
+.tac-corner.bl{left:14px;bottom:14px;border-right:none;border-top:none;}
+.tac-corner.br{right:14px;bottom:14px;border-left:none;border-top:none;}
+#screen-title .wm{right:-8px;bottom:-48px;font-size:200px;opacity:.4;}
 #screen-title h1{
-  font-family:var(--font-display);font-size:44px;letter-spacing:.12em;color:var(--paper);
-  font-weight:700;margin:6px 0 6px;text-shadow:0 3px 22px rgba(0,0,0,.6);
+  font-family:var(--font-display);font-size:46px;letter-spacing:.14em;color:var(--paper);
+  font-weight:700;margin:8px 0 10px;text-shadow:0 3px 24px rgba(0,0,0,.7);
 }
 #screen-title h1 em{font-style:normal;color:var(--cinnabar-2);}
-#screen-title .sub{color:var(--muted);font-size:12px;letter-spacing:.3em;margin-bottom:6px;font-family:var(--font-mono);text-transform:uppercase;}
-#screen-title .tagline{color:var(--paper-2);font-family:var(--font-display);font-size:14px;letter-spacing:.14em;margin-bottom:32px;opacity:.85;}
+#screen-title .sub{color:var(--muted);font-size:10.5px;letter-spacing:.32em;margin-bottom:14px;font-family:var(--font-mono);text-transform:uppercase;}
+#screen-title .tagline{color:var(--paper-2);font-family:var(--font-display);font-size:13px;letter-spacing:.16em;margin-bottom:26px;opacity:.85;}
 
 .btn{
   display:inline-flex;align-items:center;justify-content:center;gap:8px;
@@ -110,8 +122,10 @@ body{
 .cls.sel{border-color:var(--cinnabar);background:var(--panel-2);}
 .cls.sel::after{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--cinnabar);}
 .cls .gl{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-family:var(--font-display);font-size:22px;background:var(--cinnabar-soft);color:var(--cinnabar-2);}
+.cls .gl svg{display:block;}
 .cls .nm{font-size:15px;font-weight:600;color:var(--paper);font-family:var(--font-display);letter-spacing:.06em;}
 .cls .ds{font-size:11px;color:var(--muted);margin-top:1px;}
+.cls .ds2{font-size:10px;color:var(--jade);margin-top:2px;font-family:var(--font-mono);letter-spacing:.04em;}
 .cls .st{margin-left:auto;font-size:10px;color:var(--gold);text-align:right;line-height:1.6;font-family:var(--font-mono);}
 .hint{color:var(--meta);font-size:11px;margin-top:26px;line-height:1.9;letter-spacing:.03em;}
 .ver{position:absolute;bottom:14px;left:0;right:0;text-align:center;color:var(--meta);font-size:10px;font-family:var(--font-mono);letter-spacing:.14em;}
@@ -167,16 +181,42 @@ body{
 
 /* 底部操作区 */
 #dock{background:linear-gradient(0deg,var(--panel-2),var(--panel));border-top:1px solid var(--line);padding:9px 10px calc(11px + env(safe-area-inset-bottom));display:flex;align-items:center;gap:12px;}
-#dpad{display:grid;grid-template-columns:repeat(3,42px);grid-template-rows:repeat(3,38px);gap:3px;flex-shrink:0;}
-#dpad button{
-  background:linear-gradient(180deg,var(--panel-3),var(--panel-2));border:1px solid var(--line-2);color:var(--gold-2);
-  font-size:15px;border-radius:9px;cursor:pointer;transition:.1s;box-shadow:0 2px 0 rgba(0,0,0,.35);
+/* 虚拟摇杆 */
+#joy-wrap{flex-shrink:0;display:grid;place-items:center;width:104px;height:104px;}
+#joy-base{
+  position:relative;width:104px;height:104px;border-radius:50%;
+  background:radial-gradient(circle at 38% 32%, rgba(51,43,30,.9), rgba(26,22,16,.95));
+  border:1.5px solid var(--line-2);
+  box-shadow:inset 0 2px 10px rgba(0,0,0,.55), 0 1px 0 rgba(255,255,255,.05);
+  touch-action:none;user-select:none;-webkit-user-select:none;
 }
-#dpad button:active{background:var(--cinnabar-soft);color:var(--cinnabar-2);box-shadow:none;transform:translateY(1px);}
-#dpad .up{grid-column:2;} #dpad .down{grid-column:2;}
-#dpad .left{grid-column:1;grid-row:2;} #dpad .right{grid-column:3;grid-row:2;}
-#dpad .empty{visibility:hidden;}
-#dpadCenter{display:grid;place-items:center;font-family:var(--font-display);font-size:15px;color:var(--meta);}
+#joy-base::before{
+  content:"";position:absolute;inset:0;border-radius:50%;
+  background:repeating-radial-gradient(circle at center, transparent 0 15px, rgba(255,255,255,.02) 15px 16px);
+  pointer-events:none;
+}
+#joy-base::after{
+  content:"";position:absolute;left:50%;top:50%;width:64%;height:64%;
+  transform:translate(-50%,-50%);border-radius:50%;
+  border:1px dashed rgba(198,154,82,.28);pointer-events:none;
+}
+#joy-knob{
+  position:absolute;left:50%;top:50%;width:46px;height:46px;border-radius:50%;
+  transform:translate(-50%,-50%);
+  background:linear-gradient(180deg,var(--panel-3),var(--panel-2));
+  border:1.5px solid var(--gold-2);
+  box-shadow:0 3px 10px rgba(0,0,0,.55), inset 0 1px 2px rgba(255,255,255,.08);
+  pointer-events:none;transition:transform .03s linear;
+}
+#joy-dir{
+  position:absolute;inset:0;border-radius:50%;pointer-events:none;display:none;
+}
+#joy-dir::before{
+  content:"";position:absolute;top:8px;left:50%;transform:translateX(-50%);
+  border-left:5px solid transparent;border-right:5px solid transparent;border-bottom:8px solid var(--gold-2);
+  opacity:.8;
+}
+#joy-dir.active{display:block;}
 #actions{flex:1;display:grid;grid-template-columns:1fr 1fr;gap:7px;}
 #actions button{
   background:linear-gradient(180deg,var(--panel-3),var(--panel-2));border:1px solid var(--line-2);color:var(--paper);
@@ -296,34 +336,35 @@ body{
 <body>
 <div id="app">
 
-  <!-- ============ 标题画面 ============ -->
+  <!-- ============ 标题画面（战术风） ============ -->
   <div id="screen-title">
+    <div class="tac-grid"></div>
+    <div class="tac-corner tl"></div><div class="tac-corner tr"></div><div class="tac-corner bl"></div><div class="tac-corner br"></div>
     <div class="wm">征</div>
-    <div class="seal title-seal">影</div>
+    <div class="sub">SHADOW QUEST · TACTICAL OPS</div>
     <h1>暗影<em>征途</em></h1>
-    <div class="sub">SHADOW · QUEST</div>
     <div class="tagline">提灯人之传 · 完整版</div>
-    <button class="btn primary wide" id="btnNew">开始冒险</button>
+    <button class="btn primary wide" id="btnNew">开始作战</button>
     <button class="btn ghost wide" id="btnContinue" style="display:none">继续征途</button>
     <div id="classSelect" style="display:none">
       <div class="cls" data-cls="warrior">
-        <div class="gl">盾</div>
-        <div><div class="nm">战士</div><div class="ds">近战重装 · 越战越勇</div></div>
-        <div class="st">HP 160%<br>DEF III</div>
+        <div class="gl"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 L19 6 V11 C19 16.5 16 19.5 12 21 C8 19.5 5 16.5 5 11 V6 Z"/><path d="M9 12 L11 14 L15.5 9.5"/></svg></div>
+        <div><div class="nm">战士</div><div class="ds">近战重装 · 肉搏线首选</div><div class="ds2">攻击距离 1 格</div></div>
+        <div class="st">HP 160%<br>DEF III<br>近战强化</div>
       </div>
       <div class="cls" data-cls="mage">
-        <div class="gl">焱</div>
-        <div><div class="nm">法师</div><div class="ds">远程法术 · 爆发极高</div></div>
-        <div class="st">MP 150%<br>MAG III</div>
+        <div class="gl"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 V7 M12 21 V17 M3 12 H7 M21 12 H17 M6 6 L8.5 8.5 M18 6 L15.5 8.5 M6 18 L8.5 15.5 M18 18 L15.5 15.5"/><circle cx="12" cy="12" r="3.2"/></svg></div>
+        <div><div class="nm">法师</div><div class="ds">远程法术 · 后排输出</div><div class="ds2">攻击距离 5 格</div></div>
+        <div class="st">MP 150%<br>MAG III<br>远程打击</div>
       </div>
       <div class="cls" data-cls="rogue">
-        <div class="gl">匕</div>
-        <div><div class="nm">游侠</div><div class="ds">迅捷灵巧 · 暴击如影</div></div>
-        <div class="st">SPD III<br>CRIT III</div>
+        <div class="gl"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4 L4 14.5 L6.5 19.5 L11.5 17 L20 5 Z"/><path d="M13 6 L18 11"/></svg></div>
+        <div><div class="nm">游侠</div><div class="ds">灵巧迅捷 · 游走收割</div><div class="ds2">攻击距离 2.5 格</div></div>
+        <div class="st">SPD III<br>CRIT III<br>中程机动</div>
       </div>
-      <button class="btn primary block" id="btnStartGame" style="margin-top:6px">启 程</button>
+      <button class="btn primary block" id="btnStartGame" style="margin-top:6px">进入战场</button>
     </div>
-    <div class="hint">可离线游玩 · 进度自动保存<br>Safari「分享 → 添加到主屏幕」可当 App 使用</div>
+    <div class="hint">虚拟摇杆移动 · 点击按钮攻击<br>Safari「分享 → 添加到主屏幕」可当 App 使用</div>
     <div class="ver">V1.0 · 提灯人传</div>
   </div>
 
@@ -349,13 +390,11 @@ body{
       <div id="floatHint"></div>
     </div>
     <div id="dock">
-      <div id="dpad">
-        <div class="empty"></div><button class="up" data-d="up">▲</button><div class="empty"></div>
-        <button class="left" data-d="left">◀</button><div id="dpadCenter">影</div><button class="right" data-d="right">▶</button>
-        <div class="empty"></div><button class="down" data-d="down">▼</button><div class="empty"></div>
+      <div id="joy-wrap">
+        <div id="joy-base"><div id="joy-knob"></div><div id="joy-dir"></div></div>
       </div>
       <div id="actions">
-        <button id="btnAttack">攻击<span class="t">近身 · 空格</span></button>
+        <button id="btnAttack">攻击<span class="t" id="atkName">近身 · 空格</span></button>
         <button id="btnSkill" class="skill">技能<span class="t" id="skillName">裂地斩</span></button>
         <button id="btnUlt" class="ult">绝技<span class="t" id="ultName">战吼</span></button>
         <button id="btnInteract">交互<span class="t">对话 · 拾取</span></button>
@@ -535,13 +574,13 @@ const MAP_W = 40, MAP_H = 30;
    HP/MP 基数 100/40；成长曲线见 checkLevel
    ============================================================ */
 const CLASSES = {
-  warrior: { name:'战士', seal:'盾', hp:1.6, mp:.8, atk:1.25, def:1.35, spd:.92, crit:.08,
+  warrior: { name:'战士', seal:'盾', hp:1.6, mp:.8, atk:1.25, def:1.35, spd:.92, crit:.08, atkRange:1.25,
     skill: { name:'裂地斩', cost:7, mult:1.9, cd:1.2, type:'melee', desc:'范围近战重击' },
     ult:   { name:'战吼',   cost:18, mult:0,   cd:9,   type:'buff',  desc:'短时提升防御与攻击' } },
-  mage:    { name:'法师', seal:'焱', hp:.85, mp:1.55, atk:1.1, def:.8, spd:1.0, crit:.14,
+  mage:    { name:'法师', seal:'焱', hp:.85, mp:1.55, atk:1.1, def:.8, spd:1.0, crit:.14, atkRange:5.0,
     skill: { name:'流火', cost:10, mult:2.5, cd:1.4, type:'ranged', desc:'远程火焰法术' },
     ult:   { name:'霜天',   cost:22, mult:3.2, cd:10,  type:'nova',   desc:'冻结全场并重创' } },
-  rogue:   { name:'游侠', seal:'匕', hp:1.0, mp:1.0, atk:1.3, def:.9, spd:1.45, crit:.32,
+  rogue:   { name:'游侠', seal:'匕', hp:1.0, mp:1.0, atk:1.3, def:.9, spd:1.45, crit:.32, atkRange:2.6,
     skill: { name:'影袭', cost:8, mult:2.0, cd:1.0, type:'melee', desc:'贴身致命连击' },
     ult:   { name:'千刃',   cost:20, mult:2.2, cd:9,   type:'volley', desc:'高速多段突袭' } },
 };
@@ -602,30 +641,35 @@ const SHOP_STOCK = [
 const AREAS = [
   { name:'宁静草原', short:'草原', chapter:1, guardian:'guardian1',
     bg:'#19251b', g:['#233a26','#2a4530'], wall:'#3d5a44', accentRim:'rgba(111,208,140,.10)',
+    floorT:[0,12], wallT:27,
     desc:'提灯的起点，风过草伏。', enemies:['slime','bat'],
     enemyCount:11, entrance:{x:5,y:24}, exit:{x:36,y:6},
     npc:{ x:10, y:26, name:'守灯人·阿尔文', role:'KEEPER', seal:'翁',
       lines:['孩子，你终于醒了。这盏灯，等你很久了。','三十年前，暗影吞没了明烛。自此大地失光，魔物横行。','我老了，走不动了。灯，就交给你了。','往东走，穿过这片草原——每一章的尽头，都有一位被暗影侵蚀的守护者。'] } },
   { name:'幽暗森林', short:'森林', chapter:2, guardian:'guardian2',
     bg:'#101d19', g:['#183028','#1c382e'], wall:'#2c4a3a', accentRim:'rgba(90,148,131,.10)',
+    floorT:[12,22], wallT:33,
     desc:'枝叶蔽日，暗影在其间低语。', enemies:['bat','goblin','skeleton'],
     enemyCount:13, entrance:{x:3,y:6}, exit:{x:36,y:24},
     npc:{ x:5, y:10, name:'猎手·海姆', role:'HUNTER', seal:'猎',
       lines:['嘘——别惊动林子里那些影子。','森林的心脏被腐化了，走过去的冒险者，没一个回来。','带上药，别硬拼。活着，才有下一章。'] } },
   { name:'荒芜墓地', short:'墓地', chapter:3, guardian:'guardian3',
     bg:'#16141d', g:['#241f2c','#2a2433'], wall:'#3d3548', accentRim:'rgba(176,212,240,.08)',
+    floorT:[34,35], wallT:21,
     desc:'亡灵徘徊，碑石如林。', enemies:['skeleton','ghost','orc'],
     enemyCount:15, entrance:{x:3,y:24}, exit:{x:36,y:5},
     npc:{ x:6, y:26, name:'守墓人·枯', role:'GRAVEKEEPER', seal:'碑',
       lines:['活人少来。死人……也不安生。','这些游魂，是当年明烛熄灭时没能离开的亡魂。','你若能让灯重燃，或许……他们就能安息了。','骨将守着最深处的墓室，它曾是守护者，如今成了暴君。'] } },
   { name:'熔岩洞穴', short:'洞穴', chapter:4, guardian:'guardian4',
     bg:'#1d1216', g:['#2c1c22','#332027'], wall:'#4a2e36', accentRim:'rgba(224,112,58,.12)',
+    floorT:[34,22], wallT:45,
     desc:'灼热之地，铁与火交织。', enemies:['orc','golem','wraith'],
     enemyCount:17, entrance:{x:3,y:5}, exit:{x:36,y:24},
     npc:{ x:5, y:9, name:'矮人铁匠·炉', role:'SMITH', seal:'炉',
       lines:['哈哈！终于来了个敢进洞的。','洞底的巨像，是我祖辈打造的守护机关，如今被暗影占了。','用它掉的火种，能给灯添一分焰。','打得动就打，打不动就绕——不丢人。'] } },
   { name:'龙之谷', short:'龙谷', chapter:5, guardian:'shadowking',
     bg:'#171026', g:['#241638','#2b1a40'], wall:'#3f2a58', accentRim:'rgba(200,16,46,.14)',
+    floorT:[22,23], wallT:33,
     desc:'征途尽头，暗影之王在此。', enemies:['wraith','dragon'],
     enemyCount:16, entrance:{x:3,y:22}, exit:{x:38,y:4},
     npc:{ x:6, y:24, name:'先知·烛', role:'SEER', seal:'卜',
@@ -873,12 +917,23 @@ function nearestEnemy(range){
   return best;
 }
 function playerAttack(){
-  const t = nearestEnemy(1.7);
+  const c = CLASSES[G.cls];
+  const range = c.atkRange || 1.25;
+  const t = nearestEnemy(range);
   if (!t){ toast('附近没有敌人'); return; }
   const crit = chance(G.crit);
   let dmg = Math.max(1, G.atk*rand(.92,1.1) - t.def*0.5);
   if (crit) dmg *= 1.9;
   dmg = Math.round(dmg);
+  // 法师普攻：远程投射物
+  if (c.skill && c.skill.type==='ranged'){
+    const dist = Math.hypot(t.x-G.x, t.y-G.y);
+    if (dist > 2.2){
+      projectiles.push({ x:G.x*TILE+8, y:G.y*TILE+8, tx:t.x*TILE+8, ty:t.y*TILE+8, spd:340, dmg, color:'#8fd0ff', r:4.5 });
+      sfx.skill(); shake(1);
+      return;
+    }
+  }
   hitEnemy(t, dmg, crit, '#ff8a6a');
   spawnParticles(t.x*TILE+8, t.y*TILE+8, crit?12:7, crit?'#ffcc55':'#ff7766');
   shake(crit?5:2.5);
@@ -1155,16 +1210,32 @@ function drawWorld(){
       if (wx<0||wy<0||wx>=MAP_W||wy>=MAP_H) continue;
       const isWall = world[G.area][wy][wx]===1;
       const px=(wx-cam.x)*PX, py=(wy-cam.y)*PX;
-      // 地面棋盘微变
-      ctx.fillStyle = ((wx+wy)%2===0) ? A.g[0] : A.g[1];
-      ctx.fillRect(Math.round(px), Math.round(py), PX, PX);
-      if (isWall){
-        ctx.fillStyle = A.wall;
+      // 地面贴图：用区域地砖瓦片画（棋盘交替两枚，避免重复感）
+      const floors = A.floorT || [0];
+      const f1 = floors[(wx*7+wy*13) % floors.length];
+      const f2 = floors[(wx*3+wy*5+1) % floors.length];
+      const fidx = ((wx+wy)%2===0) ? f1 : f2;
+      if (atlas && atlas.complete && atlas.naturalWidth>0){
+        const sx=(fidx%ATLAS_COLS)*ATLAS_ROW, sy=Math.floor(fidx/ATLAS_COLS)*ATLAS_ROW;
+        ctx.drawImage(atlas, sx, sy, ATLAS_ROW, ATLAS_ROW, Math.round(px), Math.round(py), PX, PX);
+      } else {
+        ctx.fillStyle = ((wx+wy)%2===0) ? A.g[0] : A.g[1];
         ctx.fillRect(Math.round(px), Math.round(py), PX, PX);
-        ctx.fillStyle='rgba(0,0,0,.28)';
-        ctx.fillRect(Math.round(px), Math.round(py)+PX-6, PX, 6);
-        ctx.fillStyle='rgba(255,255,255,.05)';
-        ctx.fillRect(Math.round(px), Math.round(py), PX, 3);
+      }
+      if (isWall){
+        const widx = A.wallT || 1;
+        if (atlas && atlas.complete && atlas.naturalWidth>0){
+          const wsx=(widx%ATLAS_COLS)*ATLAS_ROW, wsy=Math.floor(widx/ATLAS_COLS)*ATLAS_ROW;
+          ctx.drawImage(atlas, wsx, wsy, ATLAS_ROW, ATLAS_ROW, Math.round(px), Math.round(py), PX, PX);
+          // 墙顶高光
+          ctx.fillStyle='rgba(255,255,255,.10)';
+          ctx.fillRect(Math.round(px), Math.round(py), PX, 3);
+        } else {
+          ctx.fillStyle = A.wall;
+          ctx.fillRect(Math.round(px), Math.round(py), PX, PX);
+          ctx.fillStyle='rgba(255,255,255,.05)';
+          ctx.fillRect(Math.round(px), Math.round(py), PX, 3);
+        }
       }
     }
   // 入口 / 出口标记
@@ -1249,17 +1320,24 @@ function shake(v){ if(!G.settings.shake) return; shakeT = Math.max(shakeT, v); }
    主循环
    ============================================================ */
 let lastT = 0;
+// 是否有 UI 弹窗打开（商店/背包/菜单/对话/结局）→ 暂停世界行动
+function uiPaused(){
+  if (!G || !G.started) return true;
+  return document.querySelector('.modal.show') !== null;
+}
 function loop(t){
   const dt = Math.min(.05, (t-lastT)/1000 || 0); lastT=t;
   if (G && G.started){
-    updatePlayer(dt);
-    updateEnemies(dt);
-    updateProjectiles(dt);
+    if (!uiPaused()){
+      updatePlayer(dt);
+      updateEnemies(dt);
+      updateProjectiles(dt);
+      if (G.ultCd>0) G.ultCd = Math.max(0, G.ultCd-dt);
+      if (G.buffT>0) G.buffT = Math.max(0, G.buffT-dt);
+      // 法力自然回复
+      G.mp = Math.min(G.maxMp, G.mp + dt*0.7);
+    }
     updateParticles(dt);
-    if (G.ultCd>0) G.ultCd = Math.max(0, G.ultCd-dt);
-    if (G.buffT>0) G.buffT = Math.max(0, G.buffT-dt);
-    // 法力自然回复
-    G.mp = Math.min(G.maxMp, G.mp + dt*0.7);
     autoT = (autoT||0)+dt;
     if (autoT > 2.5){ autoT=0; updateHUD(); }
     render();
@@ -1356,6 +1434,9 @@ function updateHUD(){
   $('skillName').textContent = sk.name + ' · ' + sk.cost;
   $('ultName').textContent = G.ultCd>0 ? '冷却 '+Math.ceil(G.ultCd)+'s' : ul.name+' · '+ul.cost;
   $('btnUlt').disabled = G.ultCd>0;
+  // 攻击距离提示
+  const atkNm = $('atkName');
+  if (atkNm) atkNm.textContent = CLASSES[G.cls].atkRange>=4 ? '远程 · 空格' : (CLASSES[G.cls].atkRange>=2?'中程 · 空格':'近身 · 空格');
   // 目标
   const q = G.quests.q_main;
   const step = q.steps.find(s=>!s.done);
@@ -1572,7 +1653,10 @@ function interact(){
   if (A.npc && Math.abs(A.npc.x-G.x)<=1 && Math.abs(A.npc.y-G.y)<=1){
     sfx.npc();
     if (A.npc.shop){ openShop(); return; }
-    showDialog({ who:A.npc.name, role:A.npc.role, seal:A.npc.seal, text:A.npc.lines.join('\n'), choices:[{label:'（继续赶路）'}] });
+    showDialog({ who:A.npc.name, role:A.npc.role, seal:A.npc.seal, text:A.npc.lines.join('\n'), choices:[
+      { label:'查看商店', hint:'补给装备与药剂', act:openShop },
+      { label:'（继续赶路）' },
+    ]});
     return;
   }
   // 商店区域：靠近出口/入口提示
@@ -1589,15 +1673,57 @@ function pickupLoot(l){
    事件绑定
    ============================================================ */
 function bind(){
-  // 方向键
-  document.querySelectorAll('#dpad button').forEach(b=>{
-    const d=b.dataset.d;
-    const on=e=>{ e.preventDefault(); setDir(d,true); };
-    const off=e=>{ e.preventDefault(); setDir(d,false); };
-    b.addEventListener('touchstart',on,{passive:false});
-    b.addEventListener('touchend',off); b.addEventListener('touchcancel',off);
-    b.addEventListener('mousedown',on); b.addEventListener('mouseup',off); b.addEventListener('mouseleave',off);
-  });
+  // 虚拟摇杆：触控/鼠标 8 方向
+  const joyBase = $('joy-base'), joyKnob = $('joy-knob'), joyDir = $('joy-dir');
+  const J_R = 52; // 摇杆半径(px)
+  let jActive=false, jId=null;
+  function joyStop(){
+    jActive=false; jId=null;
+    joyKnob.style.transform='translate(-50%,-50%)';
+    joyDir.classList.remove('active');
+    moveDir.up=moveDir.down=moveDir.left=moveDir.right=false;
+    G.moving=false;
+  }
+  function joyMove(cx,cy){
+    const rect=joyBase.getBoundingClientRect();
+    const ox=rect.left+rect.width/2, oy=rect.top+rect.height/2;
+    let dx=cx-ox, dy=cy-oy;
+    const dist=Math.hypot(dx,dy);
+    if (dist>J_R){ dx=dx/dist*J_R; dy=dy/dist*J_R; }
+    joyKnob.style.transform='translate(calc(-50% + '+dx+'px),calc(-50% + '+dy+'px))';
+    // 计算方向（8方向，死区）
+    const ang=Math.atan2(dy,dx);
+    const dead=dist<12;
+    let up=false,down=false,left=false,right=false;
+    if (!dead){
+      const deg=ang*180/Math.PI;
+      if (deg>-67.5&&deg<=67.5) right=true;
+      if (deg>22.5&&deg<=157.5) down=true;
+      if (deg>-157.5&&deg<=-22.5) up=true;
+      if (Math.abs(deg)>112.5) left=true;
+    }
+    moveDir.up=up; moveDir.down=down; moveDir.left=left; moveDir.right=right;
+    G.moving = !dead;
+    joyDir.style.transform='translate(-50%,-50%) rotate('+ang+'rad)';
+    joyDir.classList.toggle('active',!dead);
+  }
+  function joyDown(e){
+    const t=(e.touches&&e.touches[0])||e;
+    jActive=true; jId=(e.touches?e.touches[0].identifier:null);
+    joyMove(t.clientX,t.clientY);
+  }
+  function joyMoveEv(e){
+    if(!jActive) return;
+    const t=(e.touches&&e.touches[0])||e;
+    joyMove(t.clientX,t.clientY);
+  }
+  joyBase.addEventListener('touchstart',e=>{e.preventDefault();joyDown(e);},{passive:false});
+  window.addEventListener('touchmove',joyMoveEv,{passive:false});
+  window.addEventListener('touchend',e=>{ if(jActive){ for(let i=0;i<e.changedTouches.length;i++){ if(e.changedTouches[i].identifier===jId) joyStop(); } } });
+  window.addEventListener('touchcancel',e=>{ joyStop(); });
+  joyBase.addEventListener('mousedown',e=>{e.preventDefault();joyDown(e);});
+  window.addEventListener('mousemove',e=>{ joyMoveEv(e); });
+  window.addEventListener('mouseup',()=>{ if(jActive) joyStop(); });
   // 键盘
   const keyMap={ ArrowUp:'up', ArrowDown:'down', ArrowLeft:'left', ArrowRight:'right', w:'up', s:'down', a:'left', d:'right', W:'up', S:'down', A:'left', D:'right' };
   window.addEventListener('keydown',e=>{
