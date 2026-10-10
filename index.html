@@ -1,0 +1,1714 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="暗影征途">
+<meta name="theme-color" content="#15120d">
+<title>暗影征途 · 提灯人传</title>
+<style>
+/* ============================================================
+   暗影征途 · 视觉系统
+   骨架：现代克制的暗色科技结构
+   气质：暖墨宣纸 + 朱砂一抹 + 宋体笔意（轻国风）
+   ============================================================ */
+:root{
+  --ink-bg:#15120d; --ink-bg2:#1b1710;
+  --panel:#221d15; --panel-2:#2a2419; --panel-3:#332b1e;
+  --line:#3a3226; --line-2:#4a4030;
+  --paper:#ece3cd; --paper-2:#c9bfa4;
+  --muted:#948a73; --meta:#6f6656;
+  --cinnabar:#c0492f; --cinnabar-2:#e0684a; --cinnabar-soft:rgba(192,73,47,.14);
+  --jade:#5a9483; --jade-soft:rgba(90,148,131,.15);
+  --gold:#c69a52; --gold-2:#e3c07a; --gold-soft:rgba(198,154,82,.16);
+  --hp:#d1543f; --mp:#4f7fb0; --xp:#c69a52;
+  --ok:#5aa06a; --danger:#c0392b;
+  --radius:10px; --radius-lg:14px; --radius-xl:20px;
+  --font-display:'Songti SC','STSong','Source Han Serif SC','Noto Serif SC',Georgia,serif;
+  --font-body:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',system-ui,sans-serif;
+  --font-mono:ui-monospace,'SF Mono','JetBrains Mono',Menlo,monospace;
+  --elev:0 1px 2px rgba(0,0,0,.4), 0 10px 30px rgba(0,0,0,.45);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;}
+body{
+  background:var(--ink-bg); color:var(--paper);
+  font-family:var(--font-body);
+  overflow:hidden; user-select:none; -webkit-user-select:none;
+  touch-action:manipulation; line-height:1.55;
+}
+#app{max-width:540px;margin:0 auto;height:100dvh;display:flex;flex-direction:column;position:relative;overflow:hidden;}
+
+/* ---- 通用小元素 ---- */
+.kicker{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--cinnabar-2);}
+.num{font-family:var(--font-mono);font-variant-numeric:tabular-nums;}
+.seal{
+  width:40px;height:40px;display:grid;place-items:center;flex-shrink:0;
+  background:var(--cinnabar);color:#fff;border-radius:9px;
+  font-family:var(--font-display);font-size:22px;line-height:1;
+  box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.3), 0 4px 14px rgba(192,73,47,.35);
+}
+.wm{position:absolute;font-family:var(--font-display);color:var(--cinnabar-soft);line-height:1;pointer-events:none;user-select:none;}
+
+/* ============================================================
+   标题 / 开场 画面
+   ============================================================ */
+#screen-title{
+  position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  z-index:20;text-align:center;padding:28px 26px;overflow:hidden;
+  background:
+    radial-gradient(120% 90% at 50% 8%, #24301f 0%, #191410 46%, #100e0a 100%);
+}
+#screen-title::before{
+  content:"";position:absolute;inset:0;
+  background:
+    radial-gradient(60% 40% at 78% 82%, rgba(192,73,47,.14), transparent 70%),
+    radial-gradient(50% 36% at 20% 24%, rgba(90,148,131,.10), transparent 70%);
+}
+#screen-title .wm{right:-8px;bottom:-40px;font-size:180px;opacity:.5;}
+.title-seal{width:66px;height:66px;font-size:38px;border-radius:14px;margin-bottom:20px;animation:breathe 4.5s ease-in-out infinite;}
+@keyframes breathe{0%,100%{box-shadow:inset 0 0 0 2px rgba(255,255,255,.32),0 6px 26px rgba(192,73,47,.4);}50%{box-shadow:inset 0 0 0 2px rgba(255,255,255,.32),0 6px 40px rgba(192,73,47,.7);}}
+#screen-title h1{
+  font-family:var(--font-display);font-size:44px;letter-spacing:.12em;color:var(--paper);
+  font-weight:700;margin:6px 0 6px;text-shadow:0 3px 22px rgba(0,0,0,.6);
+}
+#screen-title h1 em{font-style:normal;color:var(--cinnabar-2);}
+#screen-title .sub{color:var(--muted);font-size:12px;letter-spacing:.3em;margin-bottom:6px;font-family:var(--font-mono);text-transform:uppercase;}
+#screen-title .tagline{color:var(--paper-2);font-family:var(--font-display);font-size:14px;letter-spacing:.14em;margin-bottom:32px;opacity:.85;}
+
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:12px 20px;border-radius:99px;border:1px solid var(--line-2);
+  background:var(--panel);color:var(--paper);font-size:14px;letter-spacing:.08em;
+  cursor:pointer;transition:.16s;font-family:var(--font-body);
+}
+.btn:active{transform:translateY(1px) scale(.985);}
+.btn.primary{
+  background:linear-gradient(180deg,var(--cinnabar-2),var(--cinnabar));
+  border-color:transparent;color:#fff;font-weight:600;
+  box-shadow:0 6px 20px rgba(192,73,47,.35);
+}
+.btn.primary:hover{filter:brightness(1.06);}
+.btn.ghost{background:transparent;color:var(--paper-2);}
+.btn.ghost:hover{border-color:var(--paper-2);}
+.btn.block{display:flex;width:100%;margin:8px 0;}
+.btn.sm{padding:7px 14px;font-size:12.5px;border-radius:99px;}
+.btn.wide{width:230px;}
+
+/* 职业选择卡 */
+#classSelect{display:flex;flex-direction:column;gap:9px;width:100%;max-width:320px;margin:14px auto 0;}
+.cls{
+  display:flex;align-items:center;gap:12px;padding:12px 14px;text-align:left;
+  border:1px solid var(--line);border-radius:var(--radius-lg);background:var(--panel);
+  cursor:pointer;transition:.16s;position:relative;overflow:hidden;
+}
+.cls:hover{border-color:var(--line-2);transform:translateY(-2px);}
+.cls.sel{border-color:var(--cinnabar);background:var(--panel-2);}
+.cls.sel::after{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--cinnabar);}
+.cls .gl{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-family:var(--font-display);font-size:22px;background:var(--cinnabar-soft);color:var(--cinnabar-2);}
+.cls .nm{font-size:15px;font-weight:600;color:var(--paper);font-family:var(--font-display);letter-spacing:.06em;}
+.cls .ds{font-size:11px;color:var(--muted);margin-top:1px;}
+.cls .st{margin-left:auto;font-size:10px;color:var(--gold);text-align:right;line-height:1.6;font-family:var(--font-mono);}
+.hint{color:var(--meta);font-size:11px;margin-top:26px;line-height:1.9;letter-spacing:.03em;}
+.ver{position:absolute;bottom:14px;left:0;right:0;text-align:center;color:var(--meta);font-size:10px;font-family:var(--font-mono);letter-spacing:.14em;}
+
+/* ============================================================
+   游戏主界面
+   ============================================================ */
+#screen-game{display:none;flex:1;flex-direction:column;min-height:0;}
+#topbar{padding:9px 12px 7px;background:linear-gradient(180deg,var(--panel-2),var(--panel));border-bottom:1px solid var(--line);position:relative;z-index:6;}
+.bar-row{display:flex;align-items:center;gap:8px;margin-bottom:4px;}
+.bar-label{font-size:9.5px;width:22px;color:var(--muted);font-family:var(--font-mono);letter-spacing:.06em;}
+.bar{flex:1;height:9px;background:#0c0a07;border-radius:5px;overflow:hidden;border:1px solid #000;box-shadow:inset 0 1px 2px rgba(0,0,0,.6);}
+.bar i{display:block;height:100%;border-radius:5px;transition:width .28s cubic-bezier(.3,0,0,1);}
+.bar.hp i{background:linear-gradient(90deg,#a83c2c,#d1543f,#e07a5f);}
+.bar.mp i{background:linear-gradient(90deg,#33587d,#4f7fb0,#6fa0d0);}
+.bar.xp i{background:linear-gradient(90deg,#8a6a30,#c69a52,#e3c07a);}
+.bar-val{font-size:9.5px;color:var(--muted);min-width:56px;text-align:right;font-family:var(--font-mono);}
+.info-row{display:flex;gap:12px;font-size:11px;color:var(--muted);align-items:center;margin-top:4px;}
+.info-row b{color:var(--gold-2);font-weight:600;font-family:var(--font-mono);}
+.info-row .loc{color:var(--paper-2);font-family:var(--font-display);letter-spacing:.06em;}
+.info-row .spacer{margin-left:auto;}
+.icon-btn{
+  background:var(--panel-3);border:1px solid var(--line-2);color:var(--paper-2);
+  border-radius:8px;padding:5px 10px;font-size:11.5px;cursor:pointer;transition:.15s;font-family:var(--font-body);
+}
+.icon-btn:hover{border-color:var(--cinnabar);color:var(--paper);}
+.icon-btn.hot{border-color:var(--cinnabar);color:var(--cinnabar-2);background:var(--cinnabar-soft);}
+
+#canvasWrap{flex:1;position:relative;background:#0a0906;display:flex;align-items:center;justify-content:center;overflow:hidden;min-height:0;}
+#game{display:block;max-width:100%;max-height:100%;image-rendering:pixelated;image-rendering:crisp-edges;}
+#vignette{position:absolute;inset:0;pointer-events:none;box-shadow:inset 0 0 120px 24px rgba(0,0,0,.72);border-radius:2px;}
+
+#floatHint{
+  position:absolute;top:10px;left:50%;transform:translateX(-50%) translateY(-6px);
+  background:linear-gradient(180deg,rgba(34,29,21,.96),rgba(26,22,16,.96));
+  border:1px solid var(--gold);color:var(--gold-2);font-size:12px;padding:6px 15px;border-radius:99px;
+  display:none;white-space:nowrap;pointer-events:none;z-index:7;box-shadow:var(--elev);opacity:0;transition:opacity .2s,transform .2s;
+}
+#floatHint.show{display:block;opacity:1;transform:translateX(-50%) translateY(0);}
+
+#objective{
+  position:absolute;left:10px;top:10px;max-width:62%;z-index:6;pointer-events:none;
+  background:rgba(21,18,13,.72);border-left:3px solid var(--cinnabar);
+  border-radius:0 8px 8px 0;padding:6px 11px;backdrop-filter:blur(3px);
+}
+#objective .k{font-family:var(--font-mono);font-size:8.5px;letter-spacing:.2em;color:var(--cinnabar-2);text-transform:uppercase;}
+#objective .t{font-size:11.5px;color:var(--paper-2);margin-top:2px;font-family:var(--font-display);}
+
+/* 迷你地图 */
+#minimap{position:absolute;right:10px;top:10px;z-index:6;border:1px solid var(--line-2);border-radius:8px;background:rgba(12,10,7,.7);padding:3px;display:flex;flex-direction:column;align-items:center;gap:2px;}
+#minimap canvas{display:block;image-rendering:pixelated;border-radius:4px;}
+#minimap .mm-name{font-family:var(--font-mono);font-size:7.5px;letter-spacing:.1em;color:var(--muted);}
+
+/* 底部操作区 */
+#dock{background:linear-gradient(0deg,var(--panel-2),var(--panel));border-top:1px solid var(--line);padding:9px 10px calc(11px + env(safe-area-inset-bottom));display:flex;align-items:center;gap:12px;}
+#dpad{display:grid;grid-template-columns:repeat(3,42px);grid-template-rows:repeat(3,38px);gap:3px;flex-shrink:0;}
+#dpad button{
+  background:linear-gradient(180deg,var(--panel-3),var(--panel-2));border:1px solid var(--line-2);color:var(--gold-2);
+  font-size:15px;border-radius:9px;cursor:pointer;transition:.1s;box-shadow:0 2px 0 rgba(0,0,0,.35);
+}
+#dpad button:active{background:var(--cinnabar-soft);color:var(--cinnabar-2);box-shadow:none;transform:translateY(1px);}
+#dpad .up{grid-column:2;} #dpad .down{grid-column:2;}
+#dpad .left{grid-column:1;grid-row:2;} #dpad .right{grid-column:3;grid-row:2;}
+#dpad .empty{visibility:hidden;}
+#dpadCenter{display:grid;place-items:center;font-family:var(--font-display);font-size:15px;color:var(--meta);}
+#actions{flex:1;display:grid;grid-template-columns:1fr 1fr;gap:7px;}
+#actions button{
+  background:linear-gradient(180deg,var(--panel-3),var(--panel-2));border:1px solid var(--line-2);color:var(--paper);
+  font-size:13px;border-radius:11px;padding:8px 0;cursor:pointer;transition:.12s;display:flex;flex-direction:column;align-items:center;gap:1px;
+  box-shadow:0 2px 0 rgba(0,0,0,.35);
+}
+#actions button:active{transform:translateY(1px);box-shadow:none;}
+#actions button .t{font-size:9.5px;color:var(--muted);font-family:var(--font-mono);letter-spacing:.03em;}
+#actions button.skill{border-color:var(--jade);color:#bfe0d6;}
+#actions button.skill .t{color:var(--jade);}
+#actions button.ult{border-color:var(--cinnabar);color:#f0c4b8;}
+#actions button.ult .t{color:var(--cinnabar-2);}
+#actions button:disabled{opacity:.4;filter:grayscale(.6);}
+
+/* ============================================================
+   弹窗 / 卡牌
+   ============================================================ */
+.modal{position:absolute;inset:0;z-index:15;background:rgba(8,6,4,.82);display:none;align-items:center;justify-content:center;padding:18px;backdrop-filter:blur(3px);}
+.modal.show{display:flex;animation:fadeIn .18s ease;}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.card{
+  background:linear-gradient(180deg,var(--panel-2),var(--panel));border:1px solid var(--line-2);border-radius:var(--radius-xl);
+  width:100%;max-width:370px;max-height:90%;overflow-y:auto;padding:18px 18px 16px;box-shadow:var(--elev);position:relative;
+  animation:pop .2s cubic-bezier(.2,.9,.3,1.2);
+}
+@keyframes pop{from{transform:scale(.94);opacity:0}to{transform:scale(1);opacity:1}}
+.card h3{color:var(--paper);font-family:var(--font-display);font-size:17px;letter-spacing:.1em;margin-bottom:12px;text-align:center;}
+.card h3 .kicker{display:block;margin-bottom:5px;}
+.card p{font-size:13px;line-height:1.75;color:var(--paper-2);}
+.card .dim{color:var(--muted);font-size:12px;}
+.row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 4px;border-bottom:1px solid var(--line);font-size:13px;}
+.row:last-child{border-bottom:none;}
+.row .nm{color:var(--paper-2);}
+.row .pr{color:var(--gold-2);font-size:12px;font-family:var(--font-mono);}
+.itemBtn{width:100%;margin-top:9px;padding:11px 0;border:1px solid var(--cinnabar);border-radius:11px;background:transparent;color:var(--cinnabar-2);font-size:13px;cursor:pointer;transition:.14s;font-family:var(--font-body);}
+.itemBtn:hover{background:var(--cinnabar);color:#fff;}
+.choices{display:flex;flex-direction:column;gap:8px;margin-top:12px;}
+.choice{padding:11px 14px;border:1px solid var(--line-2);border-radius:11px;background:var(--panel-3);color:var(--paper-2);font-size:13px;cursor:pointer;text-align:left;transition:.14s;}
+.choice:hover{border-color:var(--cinnabar);color:var(--paper);transform:translateX(3px);}
+.choice .hint2{display:block;font-size:10.5px;color:var(--muted);margin-top:2px;}
+
+/* 对话框（含立绘感头） */
+#modalDialog .card{max-width:380px;}
+.dlg-head{display:flex;align-items:center;gap:11px;margin-bottom:12px;}
+.dlg-avatar{width:46px;height:46px;border-radius:12px;display:grid;place-items:center;font-family:var(--font-display);font-size:24px;background:var(--jade-soft);color:#bfe0d6;flex-shrink:0;border:1px solid var(--line-2);}
+.dlg-head .who{font-family:var(--font-display);font-size:15px;letter-spacing:.08em;color:var(--paper);}
+.dlg-head .role{font-family:var(--font-mono);font-size:9.5px;letter-spacing:.16em;color:var(--muted);text-transform:uppercase;}
+#dlgText{min-height:44px;}
+
+/* 商店 */
+.shop-row{display:flex;align-items:center;gap:10px;padding:9px 6px;border-bottom:1px solid var(--line);cursor:pointer;border-radius:8px;transition:.14s;}
+.shop-row:hover{background:var(--panel-3);}
+.shop-row .s-ic{width:34px;height:34px;border-radius:9px;display:grid;place-items:center;font-family:var(--font-display);font-size:16px;background:var(--gold-soft);color:var(--gold-2);flex-shrink:0;}
+.shop-row .s-nm{font-size:13px;color:var(--paper);}
+.shop-row .s-ds{font-size:10.5px;color:var(--muted);}
+.shop-row .s-price{margin-left:auto;font-family:var(--font-mono);font-size:12px;color:var(--gold-2);}
+.shop-row.cant .s-price{color:var(--muted);}
+
+/* 背包/装备 */
+.bag-sec{font-family:var(--font-mono);font-size:9.5px;letter-spacing:.18em;color:var(--muted);text-transform:uppercase;margin:12px 0 4px;}
+.eq-slots{display:flex;gap:8px;margin-bottom:4px;}
+.eq-slot{flex:1;border:1px dashed var(--line-2);border-radius:11px;padding:9px 6px;text-align:center;}
+.eq-slot .lab{font-size:9.5px;color:var(--muted);font-family:var(--font-mono);letter-spacing:.08em;}
+.eq-slot .val{font-size:12px;color:var(--paper-2);margin-top:3px;font-family:var(--font-display);}
+.eq-slot.on{border-style:solid;border-color:var(--jade);}
+
+/* 任务日志 / 图鉴 tabs */
+.tabs{display:flex;gap:6px;margin-bottom:12px;}
+.tab{flex:1;text-align:center;padding:8px 0;border-radius:9px;border:1px solid var(--line);background:var(--panel);font-size:12px;color:var(--muted);cursor:pointer;transition:.14s;}
+.tab.on{border-color:var(--cinnabar);color:var(--paper);background:var(--cinnabar-soft);}
+.quest{border:1px solid var(--line);border-radius:12px;padding:11px 12px;margin-bottom:9px;}
+.quest.done{opacity:.6;}
+.quest .q-t{font-family:var(--font-display);font-size:14px;color:var(--paper);letter-spacing:.04em;}
+.quest .q-d{font-size:11.5px;color:var(--muted);margin-top:4px;line-height:1.6;}
+.quest .q-s{font-family:var(--font-mono);font-size:10px;margin-top:6px;color:var(--gold-2);}
+.badge{display:inline-flex;align-items:center;gap:5px;padding:2px 9px;border-radius:99px;font-size:10.5px;}
+.badge::before{content:"";width:5px;height:5px;border-radius:50%;background:currentColor;}
+.b-go{background:var(--cinnabar-soft);color:var(--cinnabar-2);}
+.b-ok{background:rgba(90,160,106,.14);color:#8fd0a0;}
+
+/* 成就 */
+.ach{display:flex;align-items:center;gap:10px;padding:8px 4px;border-bottom:1px solid var(--line);}
+.ach .a-b{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;font-family:var(--font-display);font-size:15px;background:var(--panel-3);color:var(--muted);flex-shrink:0;}
+.ach.got .a-b{background:var(--gold-soft);color:var(--gold-2);}
+
+/* 设置 */
+.set-row{display:flex;align-items:center;justify-content:space-between;padding:11px 4px;border-bottom:1px solid var(--line);font-size:13px;color:var(--paper-2);}
+.toggle{width:46px;height:26px;border-radius:99px;background:var(--panel-3);border:1px solid var(--line-2);position:relative;cursor:pointer;transition:.2s;}
+.toggle::after{content:"";position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:var(--muted);transition:.2s;}
+.toggle.on{background:var(--cinnabar-soft);border-color:var(--cinnabar);}
+.toggle.on::after{left:22px;background:var(--cinnabar-2);}
+
+/* 过场文字 */
+#cutscene{
+  position:absolute;inset:0;z-index:30;background:#0b0906;display:none;align-items:center;justify-content:center;padding:34px 30px;
+}
+#cutscene.show{display:flex;}
+#cutscene .cs-inner{max-width:420px;text-align:center;}
+#cutscene .cs-k{font-family:var(--font-mono);font-size:11px;letter-spacing:.3em;color:var(--cinnabar-2);text-transform:uppercase;margin-bottom:18px;}
+#cutscene .cs-t{font-family:var(--font-display);font-size:19px;line-height:2;letter-spacing:.06em;color:var(--paper);white-space:pre-wrap;min-height:120px;}
+#cutscene .cs-tap{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.2em;color:var(--muted);margin-top:26px;animation:blink 1.6s infinite;}
+@keyframes blink{0%,100%{opacity:.3}50%{opacity:1}}
+
+/* 结局 */
+#modalEnd .card{max-width:400px;text-align:center;}
+.end-seal{width:74px;height:74px;font-size:42px;border-radius:16px;margin:0 auto 16px;}
+.end-stats{display:flex;justify-content:center;gap:22px;margin:16px 0;flex-wrap:wrap;}
+.end-stat .n{font-family:var(--font-display);font-size:24px;color:var(--cinnabar-2);}
+.end-stat .l{font-size:10.5px;color:var(--muted);font-family:var(--font-mono);letter-spacing:.1em;}
+
+.scroll{overflow-y:auto;}
+::-webkit-scrollbar{width:7px;height:7px;}
+::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- ============ 标题画面 ============ -->
+  <div id="screen-title">
+    <div class="wm">征</div>
+    <div class="seal title-seal">影</div>
+    <h1>暗影<em>征途</em></h1>
+    <div class="sub">SHADOW · QUEST</div>
+    <div class="tagline">提灯人之传 · 完整版</div>
+    <button class="btn primary wide" id="btnNew">开始冒险</button>
+    <button class="btn ghost wide" id="btnContinue" style="display:none">继续征途</button>
+    <div id="classSelect" style="display:none">
+      <div class="cls" data-cls="warrior">
+        <div class="gl">盾</div>
+        <div><div class="nm">战士</div><div class="ds">近战重装 · 越战越勇</div></div>
+        <div class="st">HP 160%<br>DEF III</div>
+      </div>
+      <div class="cls" data-cls="mage">
+        <div class="gl">焱</div>
+        <div><div class="nm">法师</div><div class="ds">远程法术 · 爆发极高</div></div>
+        <div class="st">MP 150%<br>MAG III</div>
+      </div>
+      <div class="cls" data-cls="rogue">
+        <div class="gl">匕</div>
+        <div><div class="nm">游侠</div><div class="ds">迅捷灵巧 · 暴击如影</div></div>
+        <div class="st">SPD III<br>CRIT III</div>
+      </div>
+      <button class="btn primary block" id="btnStartGame" style="margin-top:6px">启 程</button>
+    </div>
+    <div class="hint">可离线游玩 · 进度自动保存<br>Safari「分享 → 添加到主屏幕」可当 App 使用</div>
+    <div class="ver">V1.0 · 提灯人传</div>
+  </div>
+
+  <!-- ============ 游戏主界面 ============ -->
+  <div id="screen-game">
+    <div id="topbar">
+      <div class="bar-row"><span class="bar-label">HP</span><div class="bar hp"><i id="hpBar"></i></div><span class="bar-val" id="hpVal"></span></div>
+      <div class="bar-row"><span class="bar-label">MP</span><div class="bar mp"><i id="mpBar"></i></div><span class="bar-val" id="mpVal"></span></div>
+      <div class="bar-row"><span class="bar-label">XP</span><div class="bar xp"><i id="xpBar"></i></div><span class="bar-val" id="xpVal"></span></div>
+      <div class="info-row">
+        <span>Lv <b id="lvVal">1</b></span><span class="loc" id="locVal">宁静草原</span>
+        <span>金 <b id="goldVal">0</b></span><span>攻 <b id="atkVal">10</b></span>
+        <span class="spacer"></span>
+        <button class="icon-btn" id="btnJournal">任务</button>
+        <button class="icon-btn" id="btnMenu">菜单</button>
+      </div>
+    </div>
+    <div id="canvasWrap">
+      <canvas id="game"></canvas>
+      <div id="vignette"></div>
+      <div id="objective" style="display:none"><div class="k">CURRENT OBJECTIVE</div><div class="t" id="objText"></div></div>
+      <div id="minimap"><canvas id="mmCanvas" width="76" height="58"></canvas><div class="mm-name" id="mmName">草原</div></div>
+      <div id="floatHint"></div>
+    </div>
+    <div id="dock">
+      <div id="dpad">
+        <div class="empty"></div><button class="up" data-d="up">▲</button><div class="empty"></div>
+        <button class="left" data-d="left">◀</button><div id="dpadCenter">影</div><button class="right" data-d="right">▶</button>
+        <div class="empty"></div><button class="down" data-d="down">▼</button><div class="empty"></div>
+      </div>
+      <div id="actions">
+        <button id="btnAttack">攻击<span class="t">近身 · 空格</span></button>
+        <button id="btnSkill" class="skill">技能<span class="t" id="skillName">裂地斩</span></button>
+        <button id="btnUlt" class="ult">绝技<span class="t" id="ultName">战吼</span></button>
+        <button id="btnInteract">交互<span class="t">对话 · 拾取</span></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 弹窗 ============ -->
+  <div class="modal" id="modalDialog"><div class="card">
+    <div class="dlg-head"><div class="dlg-avatar" id="dlgAvatar">影</div><div><div class="who" id="dlgWho">提灯人</div><div class="role" id="dlgRole">LANTERN BEARER</div></div></div>
+    <p id="dlgText" class="scroll" style="max-height:38vh;overflow-y:auto"></p>
+    <div class="choices" id="dlgBtns"></div>
+  </div></div>
+
+  <div class="modal" id="modalShop"><div class="card">
+    <h3><span class="kicker">TRAVELING MERCHANT</span>旅行商店</h3>
+    <div class="row" style="border:none;padding-top:0"><span class="nm">持有金币</span><span class="pr" id="shopGold">0</span></div>
+    <div id="shopList" class="scroll" style="max-height:52vh;overflow-y:auto"></div>
+    <button class="btn block ghost" id="shopClose" style="margin-top:12px">离开</button>
+  </div></div>
+
+  <div class="modal" id="modalBag"><div class="card">
+    <h3><span class="kicker">INVENTORY</span>行囊</h3>
+    <div class="bag-sec">装备</div>
+    <div class="eq-slots" id="eqSlots"></div>
+    <div class="bag-sec">道具</div>
+    <div id="bagList"></div>
+    <button class="btn block ghost" id="bagClose" style="margin-top:12px">收起行囊</button>
+  </div></div>
+
+  <div class="modal" id="modalMenu"><div class="card">
+    <h3><span class="kicker">MENU</span>菜单</h3>
+    <div class="row"><span class="nm">角色</span><span class="pr" id="menuInfo"></span></div>
+    <div class="row"><span class="nm">技能</span><span class="pr" id="menuSkill"></span></div>
+    <div class="row"><span class="nm">绝技</span><span class="pr" id="menuUlt"></span></div>
+    <div class="row"><span class="nm">进度</span><span class="pr" id="menuKill"></span></div>
+    <button class="btn block ghost" id="btnJournal2" style="margin-top:12px">任务与图鉴</button>
+    <button class="btn block ghost" id="btnSettings">设置与音效</button>
+    <button class="btn block primary" id="btnSave">保存进度</button>
+    <button class="btn block ghost" id="btnReset">重新开始</button>
+    <button class="btn block ghost" id="menuClose">关闭</button>
+  </div></div>
+
+  <div class="modal" id="modalJournal"><div class="card">
+    <h3><span class="kicker">JOURNAL</span>见闻录</h3>
+    <div class="tabs">
+      <div class="tab on" data-tab="quest">任务</div>
+      <div class="tab" data-tab="codex">图鉴</div>
+      <div class="tab" data-tab="ach">成就</div>
+    </div>
+    <div id="journalBody" class="scroll" style="max-height:56vh;overflow-y:auto"></div>
+    <button class="btn block ghost" id="journalClose" style="margin-top:12px">关闭</button>
+  </div></div>
+
+  <div class="modal" id="modalSettings"><div class="card">
+    <h3><span class="kicker">SETTINGS</span>设置</h3>
+    <div class="set-row"><span>音效</span><div class="toggle on" id="tgSound"></div></div>
+    <div class="set-row"><span>战斗震屏</span><div class="toggle on" id="tgShake"></div></div>
+    <div class="set-row"><span>操作提示</span><div class="toggle on" id="tgHints"></div></div>
+    <div class="set-row"><span>版本</span><span class="pr" id="setVer">V1.0</span></div>
+    <button class="btn block ghost" id="settingsClose" style="margin-top:12px">返回</button>
+  </div></div>
+
+  <div class="modal" id="modalEnd"><div class="card">
+    <div class="seal end-seal">歸</div>
+    <h3><span class="kicker">EPILOGUE</span>征途终章</h3>
+    <p id="endText"></p>
+    <div class="end-stats" id="endStats"></div>
+    <button class="btn block primary" id="endBtn">继续镇守世界</button>
+  </div></div>
+
+  <!-- 过场文字 -->
+  <div id="cutscene"><div class="cs-inner">
+    <div class="cs-k" id="csKicker">PROLOGUE</div>
+    <div class="cs-t" id="csText"></div>
+    <div class="cs-tap">点击任意处继续 ▸</div>
+  </div></div>
+
+</div>
+<script>
+'use strict';
+/* ============================================================
+   暗影征途 · 提灯人传  V1.0
+   数据层：所有可调参数集中于此，便于后续版本平衡与扩展
+   ============================================================ */
+const VERSION = 'V1.0 · 提灯人传';
+const SAVE_KEY = 'shadowQuestSave_v2';
+const SAVE_KEY_LEGACY = 'shadowQuestSave_v1';
+
+/* ---- 更新日志 & 路线（面向后续版本的可扩展设计） ---- */
+const CHANGELOG = [
+  { v:'V1.0 · 提灯人传', items:[
+    '完整主线剧情：五章 · 提灯人重燃明烛',
+    '任务系统：主线 + 支线 + 图鉴 + 成就',
+    '双技能 + 绝技的三段式战斗体系',
+    '轻国风暗墨 UI 全面重制（印章 / 宋体 / 朱砂）',
+    '每章守护者 Boss、区域氛围光照与小地图',
+    '数值重平衡：等级曲线、敌人成长、经济循环',
+  ]},
+];
+const ROADMAP = [
+  { v:'V1.1 计划', items:['新区域「云上书院」','装备词条系统','每日试炼','结局后自由探索事件'] },
+  { v:'V1.2 计划', items:['同伴系统','技能树分支','更高难度轮回','成就拓展包'] },
+];
+/* 扩展点说明：新增敌人→ENEMIES；新增区域→AREAS + atlas 索引；
+   新增任务→QUESTS 与 mainQuest 链；新增道具→ITEMS。 */
+</script>
+<script>
+/* ============================================================
+   精灵图集（Kenney Tiny Dungeon, CC0）——由原文件抽取注入
+   ============================================================ */
+const ATLAS = {
+  0: 'data:image/png;base64,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',      // 宁静草原
+  1: 'data:image/png;base64,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',     // 幽暗森林
+  2: 'data:image/png;base64,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',  // 荒芜墓地
+  3: 'data:image/png;base64,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',       // 熔岩洞穴
+  4: 'data:image/png;base64,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',     // 龙之谷
+};
+
+
+</script>
+<script>
+
+/* ============================================================
+   工具函数
+   ============================================================ */
+const $ = id => document.getElementById(id);
+const clamp = (v,a,b) => Math.max(a, Math.min(b,v));
+const rand = (a,b) => a + Math.random()*(b-a);
+const randInt = (a,b) => Math.floor(rand(a,b+1));
+const chance = p => Math.random() < p;
+const pick = arr => arr[randInt(0,arr.length-1)];
+
+/* ============================================================
+   音效（WebAudio，零外部依赖）
+   ============================================================ */
+let audioCtx=null, soundOn=true;
+function beep(freq,dur,vol,type){
+  if(!soundOn) return;
+  try{
+    audioCtx = audioCtx || new (window.AudioContext||window.webkitAudioContext)();
+    const o=audioCtx.createOscillator(), g=audioCtx.createGain();
+    o.type=type||'square'; o.frequency.value=freq; g.gain.value=vol||0.05;
+    o.connect(g); g.connect(audioCtx.destination);
+    o.start(); o.stop(audioCtx.currentTime+dur);
+    g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime+dur);
+  }catch(e){}
+}
+const sfx = {
+  hit:   ()=>{ beep(190,.07,.07,'square'); beep(120,.06,.05,'triangle'); },
+  crit:  ()=>{ beep(150,.09,.09,'square'); beep(360,.14,.07,'triangle'); },
+  skill: ()=>{ beep(430,.14,.08,'sawtooth'); beep(640,.2,.06,'triangle'); },
+  ult:   ()=>{ [300,420,560,760].forEach((f,i)=>setTimeout(()=>beep(f,.14,.08,'triangle'),i*60)); },
+  hurt:  ()=>beep(105,.16,.08,'sawtooth'),
+  die:   ()=>{ beep(300,.18,.09,'square'); beep(180,.28,.09,'square'); },
+  coin:  ()=>{ beep(900,.07,.05,'sine'); beep(1350,.09,.045,'sine'); },
+  level: ()=>{ [523,659,784,1046].forEach((f,i)=>setTimeout(()=>beep(f,.13,.07,'triangle'),i*80)); },
+  potion:()=>{ beep(620,.1,.05,'sine'); beep(940,.14,.045,'sine'); },
+  pickup:()=>beep(720,.07,.045,'sine'),
+  equip: ()=>{ beep(500,.07,.06,'triangle'); beep(760,.1,.06,'triangle'); },
+  portal:()=>{ beep(200,.4,.09,'sine'); beep(320,.4,.07,'sine'); },
+  npc:   ()=>beep(460,.05,.045,'sine'),
+  menu:  ()=>beep(560,.05,.04,'sine'),
+  achievement:()=>{ [659,880,1046].forEach((f,i)=>setTimeout(()=>beep(f,.16,.06,'triangle'),i*90)); },
+  gameover:()=>{ beep(220,.2,.1,'square'); beep(160,.3,.1,'square'); beep(110,.5,.11,'square'); },
+};
+
+/* ============================================================
+   常量
+   ============================================================ */
+const TILE = 16;
+const VIEW = { w: 16, h: 14 };
+const MAP_W = 40, MAP_H = 30;
+
+/* ============================================================
+   职业（平衡：三种清晰定位）
+   HP/MP 基数 100/40；成长曲线见 checkLevel
+   ============================================================ */
+const CLASSES = {
+  warrior: { name:'战士', seal:'盾', hp:1.6, mp:.8, atk:1.25, def:1.35, spd:.92, crit:.08,
+    skill: { name:'裂地斩', cost:7, mult:1.9, cd:1.2, type:'melee', desc:'范围近战重击' },
+    ult:   { name:'战吼',   cost:18, mult:0,   cd:9,   type:'buff',  desc:'短时提升防御与攻击' } },
+  mage:    { name:'法师', seal:'焱', hp:.85, mp:1.55, atk:1.1, def:.8, spd:1.0, crit:.14,
+    skill: { name:'流火', cost:10, mult:2.5, cd:1.4, type:'ranged', desc:'远程火焰法术' },
+    ult:   { name:'霜天',   cost:22, mult:3.2, cd:10,  type:'nova',   desc:'冻结全场并重创' } },
+  rogue:   { name:'游侠', seal:'匕', hp:1.0, mp:1.0, atk:1.3, def:.9, spd:1.45, crit:.32,
+    skill: { name:'影袭', cost:8, mult:2.0, cd:1.0, type:'melee', desc:'贴身致命连击' },
+    ult:   { name:'千刃',   cost:20, mult:2.2, cd:9,   type:'volley', desc:'高速多段突袭' } },
+};
+
+/* ============================================================
+   敌人（按章节递增成长）
+   ============================================================ */
+const ENEMIES = {
+  slime:    { name:'史莱姆',    sprite:103, hp:22,  atk:5,  def:1,  xp:9,   gold:[2,5],   spd:.7,  aggro:2.4, tint:'#6fd08c', lore:'草原上最常见的魔物，柔软无害，却成群滋生暗影。' },
+  bat:      { name:'暗影蝙蝠',  sprite:104, hp:16,  atk:7,  def:0,  xp:11,  gold:[3,6],   spd:1.5, aggro:3.4, tint:'#8a6ae0', lore:'被暗影侵蚀的蝙蝠，行动迅捷，撕咬见血。' },
+  goblin:   { name:'哥布林',    sprite:106, hp:34,  atk:9,  def:2,  xp:18,  gold:[5,10],  spd:1.0, aggro:3.0, tint:'#d08a4e', lore:'森林里的掠夺者，常三五成群，狡诈而贪婪。' },
+  skeleton: { name:'骷髅兵',    sprite:84,  hp:44,  atk:12, def:3,  xp:26,  gold:[8,14],  spd:.9,  aggro:3.2, tint:'#e8e8f0', lore:'墓园中不眠的旧日战士，骨节作响却不曾倒下。' },
+  ghost:    { name:'游魂',      sprite:96,  hp:30,  atk:13, def:1,  xp:30,  gold:[10,16], spd:1.2, aggro:3.8, tint:'#b0d4f0', lore:'未偿心愿的执念，怕强光，惧烈火。' },
+  orc:      { name:'兽人战士',  sprite:100, hp:62,  atk:16, def:5,  xp:40,  gold:[12,20], spd:.9,  aggro:3.0, tint:'#7a9a4e', lore:'洞穴深处的蛮力种族，皮糙肉厚，一击碎石。' },
+  golem:    { name:'岩石傀儡',  sprite:97,  hp:92,  atk:19, def:9,  xp:58,  gold:[18,30], spd:.6,  aggro:2.6, tint:'#a08a70', lore:'古老石阵苏醒的守卫，刀剑难伤，惟惧雷霆。' },
+  wraith:   { name:'暗影魔',    sprite:113, hp:74,  atk:22, def:5,  xp:70,  gold:[20,34], spd:1.25,aggro:3.8, tint:'#5a4a8a', lore:'暗影之王的仆从，自虚空掠过，吞食生气。' },
+  dragon:   { name:'幼龙',      sprite:120, hp:135, atk:27, def:7,  xp:105, gold:[30,52], spd:1.0, aggro:3.4, tint:'#e05252', lore:'尚未长成的龙裔，护佑着龙之谷的传承之宝。' },
+  // 章节守护者
+  guardian1:{ name:'草原之灵·苔', sprite:123, hp:180, atk:14, def:6, xp:150, gold:[80,120], spd:.9, aggro:4.0, tint:'#6fd08c', boss:true, lore:'守护草原的古木精魂，被暗影侵蚀而暴走。' },
+  guardian2:{ name:'腐木之心',   sprite:124, hp:300, atk:20, def:9, xp:280, gold:[140,200],spd:.85,aggro:4.0, tint:'#7a9a4e', boss:true, lore:'森林中央吞噬生机的腐化核心。' },
+  guardian3:{ name:'守墓骨将',   sprite:125, hp:520, atk:28, def:12,xp:480, gold:[220,320],spd:.9, aggro:4.2, tint:'#cfc8dd', boss:true, lore:'墓园最深处的主宰，率亡灵潮而战。' },
+  guardian4:{ name:'熔心巨像',   sprite:126, hp:820, atk:36, def:16,xp:760, gold:[340,480],spd:.7, aggro:4.2, tint:'#e0703a', boss:true, lore:'以熔岩铸就的远古造物，胸腔中燃烧着不灭之火。' },
+  shadowking:{ name:'暗影之王',  sprite:127, hp:1600,atk:48, def:22,xp:2500,gold:[1200,1800],spd:.95,aggro:5.5, tint:'#c8102e', boss:true, final:true, lore:'吞噬无数明烛的暗影本源，征途的终点。' },
+};
+
+/* ============================================================
+   物品（消耗 / 武器 / 护甲 / 饰品）
+   ============================================================ */
+const ITEMS = {
+  potion:  { name:'回春丹',   seal:'丹', type:'consumable', price:15,  heal:60,  desc:'恢复 60 点生命' },
+  mpotion: { name:'凝神散',   seal:'散', type:'consumable', price:18,  mp:45,    desc:'恢复 45 点法力' },
+  elixir:  { name:'九转还魂', seal:'魂', type:'consumable', price:60,  heal:999, mp:999, desc:'回满生命的珍稀药剂' },
+  sword1:  { name:'铁剑',     seal:'铁', type:'weapon', price:40,  atk:6,   desc:'攻击 +6' },
+  sword2:  { name:'寒霜剑',   seal:'霜', type:'weapon', price:130, atk:14,  crit:.05, desc:'攻击 +14 · 暴击 +5%' },
+  sword3:  { name:'烈焰剑',   seal:'焰', type:'weapon', price:360, atk:26,  crit:.08, desc:'攻击 +26 · 暴击 +8%' },
+  sword4:  { name:'明烛之刃', seal:'烛', type:'weapon', price:0,   atk:40,  crit:.12, desc:'攻击 +40 · 暴击 +12%（传说）' },
+  armor1:  { name:'皮甲',     seal:'皮', type:'armor', price:35,  def:4,   hp:20,  desc:'防御 +4 · 生命 +20' },
+  armor2:  { name:'锁子甲',   seal:'锁', type:'armor', price:110, def:9,   hp:40,  desc:'防御 +9 · 生命 +40' },
+  armor3:  { name:'龙鳞甲',   seal:'鳞', type:'armor', price:300, def:16,  hp:80,  desc:'防御 +16 · 生命 +80' },
+  ring1:   { name:'力量戒',   seal:'力', type:'ring',  price:90,  atk:6,   desc:'攻击 +6' },
+  ring2:   { name:'迅捷戒',   seal:'迅', type:'ring',  price:120, crit:.12, spd:.15, desc:'暴击 +12% · 速度 +15%' },
+  ring3:   { name:'智识戒',   seal:'智', type:'ring',  price:110, mp:40,   desc:'法力 +40' },
+  ring4:   { name:'守心戒',   seal:'心', type:'ring',  price:130, def:8,   hp:50,  desc:'防御 +8 · 生命 +50' },
+};
+
+/* 商店按章节开放的货单 */
+const SHOP_STOCK = [
+  ['potion','mpotion','sword1','armor1','ring1'],
+  ['potion','mpotion','sword2','armor1','armor2','ring2','ring3'],
+  ['potion','mpotion','elixir','sword2','armor2','ring2','ring4'],
+  ['potion','mpotion','elixir','sword3','armor2','armor3','ring2','ring4'],
+  ['potion','mpotion','elixir','sword3','armor3','ring2','ring4'],
+];
+
+/* ============================================================
+   区域（五章地图）
+   ============================================================ */
+const AREAS = [
+  { name:'宁静草原', short:'草原', chapter:1, guardian:'guardian1',
+    bg:'#19251b', g:['#233a26','#2a4530'], wall:'#3d5a44', accentRim:'rgba(111,208,140,.10)',
+    desc:'提灯的起点，风过草伏。', enemies:['slime','bat'],
+    enemyCount:11, entrance:{x:5,y:24}, exit:{x:36,y:6},
+    npc:{ x:10, y:26, name:'守灯人·阿尔文', role:'KEEPER', seal:'翁',
+      lines:['孩子，你终于醒了。这盏灯，等你很久了。','三十年前，暗影吞没了明烛。自此大地失光，魔物横行。','我老了，走不动了。灯，就交给你了。','往东走，穿过这片草原——每一章的尽头，都有一位被暗影侵蚀的守护者。'] } },
+  { name:'幽暗森林', short:'森林', chapter:2, guardian:'guardian2',
+    bg:'#101d19', g:['#183028','#1c382e'], wall:'#2c4a3a', accentRim:'rgba(90,148,131,.10)',
+    desc:'枝叶蔽日，暗影在其间低语。', enemies:['bat','goblin','skeleton'],
+    enemyCount:13, entrance:{x:3,y:6}, exit:{x:36,y:24},
+    npc:{ x:5, y:10, name:'猎手·海姆', role:'HUNTER', seal:'猎',
+      lines:['嘘——别惊动林子里那些影子。','森林的心脏被腐化了，走过去的冒险者，没一个回来。','带上药，别硬拼。活着，才有下一章。'] } },
+  { name:'荒芜墓地', short:'墓地', chapter:3, guardian:'guardian3',
+    bg:'#16141d', g:['#241f2c','#2a2433'], wall:'#3d3548', accentRim:'rgba(176,212,240,.08)',
+    desc:'亡灵徘徊，碑石如林。', enemies:['skeleton','ghost','orc'],
+    enemyCount:15, entrance:{x:3,y:24}, exit:{x:36,y:5},
+    npc:{ x:6, y:26, name:'守墓人·枯', role:'GRAVEKEEPER', seal:'碑',
+      lines:['活人少来。死人……也不安生。','这些游魂，是当年明烛熄灭时没能离开的亡魂。','你若能让灯重燃，或许……他们就能安息了。','骨将守着最深处的墓室，它曾是守护者，如今成了暴君。'] } },
+  { name:'熔岩洞穴', short:'洞穴', chapter:4, guardian:'guardian4',
+    bg:'#1d1216', g:['#2c1c22','#332027'], wall:'#4a2e36', accentRim:'rgba(224,112,58,.12)',
+    desc:'灼热之地，铁与火交织。', enemies:['orc','golem','wraith'],
+    enemyCount:17, entrance:{x:3,y:5}, exit:{x:36,y:24},
+    npc:{ x:5, y:9, name:'矮人铁匠·炉', role:'SMITH', seal:'炉',
+      lines:['哈哈！终于来了个敢进洞的。','洞底的巨像，是我祖辈打造的守护机关，如今被暗影占了。','用它掉的火种，能给灯添一分焰。','打得动就打，打不动就绕——不丢人。'] } },
+  { name:'龙之谷', short:'龙谷', chapter:5, guardian:'shadowking',
+    bg:'#171026', g:['#241638','#2b1a40'], wall:'#3f2a58', accentRim:'rgba(200,16,46,.14)',
+    desc:'征途尽头，暗影之王在此。', enemies:['wraith','dragon'],
+    enemyCount:16, entrance:{x:3,y:22}, exit:{x:38,y:4},
+    npc:{ x:6, y:24, name:'先知·烛', role:'SEER', seal:'卜',
+      lines:['我看见了——你提着灯，走到了这里。','暗影之王不死，因为它吞的是人心里的光。','你的灯，是最后一点明烛。要么燃尽它，要么被它燃尽。','去吧，孩子。征途的意义，从来不在终点。'] } },
+];
+
+/* ============================================================
+   剧情：开场 / 章节过场 / 结局
+   ============================================================ */
+const PROLOGUE = [
+  { k:'PROLOGUE · 序', t:'很久以前，天地间有一盏「明烛」，\n照彻长夜，驱散一切暗影。' },
+  { k:'PROLOGUE · 序', t:'三十年前的一个冬夜，明烛忽然熄灭。\n黑暗自地底涌出，魔物横行，\n村庄一座接一座沉寂。' },
+  { k:'PROLOGUE · 序', t:'提灯人一族，守着明烛最后的火种。\n如今，只剩你一人。\n提上这盏灯——暗影征途，自此处始。' },
+];
+const CHAPTER_INTRO = [
+  { k:'CHAPTER I · 宁静草原', t:'风自草原而来，携着青草与泥土的气味。\n你提灯醒来，第一簇火苗在你掌心亮起。\n前方，是被侵蚀后暴走的守护者。' },
+  { k:'CHAPTER II · 幽暗森林', t:'树冠遮蔽了天光，唯一的照明是你的灯。\n林间影子会动，它们在低声念着你的名字。\n腐化自森林心脏蔓延，啃噬一切生灵。' },
+  { k:'CHAPTER III · 荒芜墓地', t:'碑石如林，无风却有骨响。\n当年的亡魂，因明烛熄灭而不得安息。\n它们的王，成了墓园最深处的暴君。' },
+  { k:'CHAPTER IV · 熔岩洞穴', t:'热浪扑面，铁器在暗红中泛光。\n矮人先祖的守护造物，被暗影占据了胸膛。\n熔心不灭，巨像不死。' },
+  { k:'CHAPTER V · 龙之谷', t:'峡谷尽头，暗影翻涌成海。\n它从不曾远离——它在等一个愿意提灯的人。\n这一章的结局，由你的火焰书写。' },
+];
+const ENDING_TEXT =
+  '暗影散去，天光第一次自峡谷尽头涌来。\n你手中的明烛，终于重燃，照亮了整片大地。\n\n多年以后，人们说：曾有一个提灯的孩子，\n走过草原、森林、墓地与熔岩，\n在最深的黑暗里，点亮了一盏不灭的灯。\n\n——你的征途，成了后世传唱的传说。';
+
+/* ============================================================
+   任务链（主线随章节推进 + 支线 + 图鉴/成就）
+   ============================================================ */
+const QUESTS = {
+  q_main: { title:'主线 · 提灯人传', type:'main', steps:[
+    { d:'击败草原守护者·苔', done:false },
+    { d:'击败腐木之心', done:false },
+    { d:'击败守墓骨将', done:false },
+    { d:'击败熔心巨像', done:false },
+    { d:'击败暗影之王，重燃明烛', done:false },
+  ]},
+  q_slay: { title:'支线 · 清剿魔物', type:'side', desc:'累计击败魔物', target:40 },
+  q_codex:{ title:'支线 · 博物之志', type:'side', desc:'在图鉴中记录 8 种魔物', target:8 },
+  q_gear: { title:'支线 · 武装自己', type:'side', desc:'装备武器与护甲', target:1 },
+};
+
+const ACHIEVEMENTS = [
+  { id:'first_blood', name:'初试锋芒', seal:'锋', desc:'击败第一只魔物' },
+  { id:'lv5',   name:'渐入佳境', seal:'渐', desc:'达到 5 级' },
+  { id:'lv10',  name:'声名鹊起', seal:'名', desc:'达到 10 级' },
+  { id:'chapter1', name:'第一章·草原之歌', seal:'壹', desc:'击败草原守护者' },
+  { id:'chapter5', name:'终章·提灯人', seal:'终', desc:'击败暗影之王' },
+  { id:'slayer', name:'百战之身', seal:'战', desc:'累计击败 100 只魔物' },
+  { id:'rich',   name:'富甲一方', seal:'财', desc:'持有 1000 金币' },
+  { id:'codex8', name:'博物学家', seal:'博', desc:'记录 8 种魔物' },
+];
+
+</script>
+<script>
+
+/* ============================================================
+   图集系统
+   ============================================================ */
+const atlasImgs = {};
+const ATLAS_COLS = 12, ATLAS_ROW = 16;
+let atlasReady = 0;
+function loadAtlases(cb){
+  let total = 0; for (const k in ATLAS) total++;
+  for (const k in ATLAS){
+    const img = new Image();
+    img.onload = () => { atlasReady++; if (atlasReady >= total && cb) cb(); };
+    img.onerror = () => { atlasReady++; if (atlasReady >= total && cb) cb(); };
+    img.src = ATLAS[k];
+    atlasImgs[k] = img;
+  }
+}
+function getAtlas(){ return atlasImgs[G.area] || atlasImgs[0]; }
+function atlasLoaded(){ const a = getAtlas(); return a && a.complete && a.naturalWidth > 0; }
+
+/* ============================================================
+   Canvas 设置
+   ============================================================ */
+const canvas = $('game');
+const ctx = canvas.getContext('2d');
+const PX = 32;
+canvas.width = VIEW.w * PX;
+canvas.height = VIEW.h * PX;
+const mmCanvas = $('mmCanvas');
+const mctx = mmCanvas.getContext('2d');
+
+/* ============================================================
+   游戏状态
+   ============================================================ */
+let G = null;
+let enemies = [], loots = [], particles = [], floats = [], projectiles = [];
+let cam = { x:0, y:0 };
+let shakeT = 0;
+let bossRef = null;
+
+function newGame(cls){
+  const c = CLASSES[cls];
+  const maxHp = Math.round(100 * c.hp);
+  const maxMp = Math.round(40 * c.mp);
+  G = {
+    cls, className:c.name, seal:c.seal,
+    x:AREAS[0].entrance.x, y:AREAS[0].entrance.y,
+    px:AREAS[0].entrance.x, py:AREAS[0].entrance.y,
+    facing:'down', moving:false,
+    area:0, hp:maxHp, maxHp, mp:maxMp, maxMp,
+    lv:1, xp:0, xpNext:70, gold:40,
+    baseAtk:10, baseDef:2, atk:10, def:2, crit:c.crit, spd:c.spd,
+    weapon:null, armor:null, ring:null,
+    inv:{ potion:3, mpotion:1 },
+    kills:0, chapter:1, guardiansDefeated:0, questsDone:0,
+    buffT:0, started:true,
+    quests: JSON.parse(JSON.stringify(QUESTS)),
+    codex:{}, achievements:{}, seenIntro:{},
+    settings:{ sound:true, shake:true, hints:true },
+    visited:[true,false,false,false,false],
+  };
+  recalc(true);
+  loadArea(0, false);
+  updateHUD();
+}
+
+function recalc(full){
+  const c = CLASSES[G.cls];
+  const w = G.weapon ? ITEMS[G.weapon] : null;
+  const a = G.armor ? ITEMS[G.armor] : null;
+  const r = G.ring ? ITEMS[G.ring] : null;
+  G.atk = Math.round(G.baseAtk * c.atk + (w?w.atk||0:0) + (r?r.atk||0:0));
+  G.def = Math.round(G.baseDef * c.def + (a?a.def||0:0) + (r&&r.def?r.def:0));
+  let crit = c.crit + (w?w.crit||0:0) + (r?r.crit||0:0);
+  G.crit = Math.min(.75, crit);
+  let spd = c.spd + (r?r.spd||0:0);
+  G.spd = spd;
+  const bonusHp = (a?a.hp||0:0) + (r&&r.hp?r.hp:0);
+  const bonusMp = (r&&r.mp?r.mp:0);
+  if (full){
+    G.maxHpBonus = bonusHp; G.maxMpBonus = bonusMp;
+  } else {
+    // 仅在装备变化时，将差值加入当前上限
+    const dHp = bonusHp - (G.maxHpBonus||0);
+    const dMp = bonusMp - (G.maxMpBonus||0);
+    G.maxHp += dHp; G.maxMp += dMp;
+    G.maxHpBonus = bonusHp; G.maxMpBonus = bonusMp;
+  }
+  G.hp = Math.min(G.hp, G.maxHp);
+  G.mp = Math.min(G.mp, G.maxMp);
+}
+
+/* ============================================================
+   地图生成
+   ============================================================ */
+let world = [];
+function genArea(i){
+  const A = AREAS[i];
+  const g = Array.from({length:MAP_H}, () => Array(MAP_W).fill(0));
+  for (let x=0;x<MAP_W;x++){ g[0][x]=1; g[MAP_H-1][x]=1; }
+  for (let y=0;y<MAP_H;y++){ g[y][0]=1; g[y][MAP_W-1]=1; }
+  let seed = i*7919 + 13;
+  const rnd = () => { seed = (seed*16807 + 19) % 2147483647; return seed/2147483647; };
+  const density = 0.09 + i*0.011;
+  for (let y=2;y<MAP_H-2;y++)
+    for (let x=2;x<MAP_W-2;x++){
+      if (rnd() < density){
+        const nearExit = Math.abs(x-A.exit.x)<=1 && Math.abs(y-A.exit.y)<=1;
+        const nearEnt = Math.abs(x-A.entrance.x)<=1 && Math.abs(y-A.entrance.y)<=1;
+        if (!nearExit && !nearEnt) g[y][x]=1;
+      }
+    }
+  g[A.entrance.y][A.entrance.x]=0;
+  g[A.exit.y][A.exit.x]=0;
+  return g;
+}
+function buildWorld(){ world = AREAS.map((_,i)=>genArea(i)); }
+
+function canStand(x,y){
+  if (x<1||y<1||x>=MAP_W-1||y>=MAP_H-1) return false;
+  return world[G.area][y][x] !== 1;
+}
+
+/* ============================================================
+   敌人 / 掉落
+   ============================================================ */
+function spawnEnemies(){
+  enemies = []; bossRef = null;
+  const A = AREAS[G.area];
+  for (let i=0;i<A.enemyCount;i++){
+    let x,y,tries=0;
+    do { x=randInt(2,MAP_W-3); y=randInt(2,MAP_H-3); tries++; }
+    while (tries<40 && (world[G.area][y][x]===1 || (Math.abs(x-G.x)<3 && Math.abs(y-G.y)<3)));
+    if (tries>=40) continue;
+    const type = pick(A.enemies);
+    enemies.push(makeEnemy(type, x, y));
+  }
+  // 新手区附近保底一只
+  if (G.area===0){
+    let placed=false,tries=0;
+    while(!placed && tries<60){
+      tries++;
+      const ang=rand(0,Math.PI*2), dist=randInt(4,7);
+      const ex=Math.round(G.x+Math.cos(ang)*dist), ey=Math.round(G.y+Math.sin(ang)*dist);
+      if (canStand(ex,ey) && !enemies.some(o=>o.x===ex&&o.y===ey)){
+        enemies.push(makeEnemy(pick(A.enemies), ex, ey)); placed=true;
+      }
+    }
+  }
+  // 章节守护者：放在出口附近
+  if (A.guardian && !G.seenIntro['boss'+G.area]){
+    const bx = clamp(A.exit.x + (A.exit.x<20? 6 : -6), 3, MAP_W-4);
+    const by = clamp(A.exit.y + (A.exit.y<15? 4 : -4), 3, MAP_H-4);
+    const b = makeEnemy(A.guardian, bx, by);
+    b.isBoss = true; b.guardian = true;
+    enemies.push(b); bossRef = b;
+  }
+}
+function makeEnemy(type, x, y){
+  const t = ENEMIES[type];
+  const scale = 1 + (G.area)*0.06;
+  return {
+    type, name:t.name, x, y, sprite:t.sprite,
+    hp:Math.round(t.hp*scale), maxHp:Math.round(t.hp*scale),
+    atk:Math.round(t.atk*scale), def:t.def, xp:t.xp,
+    gold:randInt(t.gold[0],t.gold[1]), spd:t.spd, tint:t.tint,
+    aggro:t.aggro, boss:!!t.boss, alive:true, hurtT:0, atkCd:0, slowT:0, wob:rand(0,6.28),
+  };
+}
+function dropLoot(x,y,e){
+  const r = Math.random();
+  if (r<0.42) loots.push({x,y,type:'gold',amt:e.gold,life:28,ct:0});
+  else if (r<0.55) loots.push({x,y,type:'item',item:'potion',life:28,ct:0});
+  else if (r<0.62 && G.area>=1) loots.push({x,y,type:'item',item:'mpotion',life:28,ct:0});
+  else if (r<0.66) loots.push({x,y,type:'item',item:pick(['sword1','armor1','ring1']),life:40,ct:0});
+  if (e.guardian){
+    const ch = G.area;
+    loots.push({x,y,type:'item',item:'elixir',life:60,ct:0});
+    if (ch===3||ch===4) loots.push({x,y,type:'item',item:ch===4?'sword4':'armor3',life:60,ct:0});
+    loots.push({x,y,type:'gold',amt:e.gold*2,life:60,ct:0});
+  }
+}
+
+/* ============================================================
+   战斗
+   ============================================================ */
+function nearestEnemy(range){
+  let best=null, bd=range*TILE;
+  for (const e of enemies){ if(!e.alive) continue;
+    const d=Math.hypot(e.x-G.x, e.y-G.y);
+    if (d<bd){ bd=d; best=e; } }
+  return best;
+}
+function playerAttack(){
+  const t = nearestEnemy(1.7);
+  if (!t){ toast('附近没有敌人'); return; }
+  const crit = chance(G.crit);
+  let dmg = Math.max(1, G.atk*rand(.92,1.1) - t.def*0.5);
+  if (crit) dmg *= 1.9;
+  dmg = Math.round(dmg);
+  hitEnemy(t, dmg, crit, '#ff8a6a');
+  spawnParticles(t.x*TILE+8, t.y*TILE+8, crit?12:7, crit?'#ffcc55':'#ff7766');
+  shake(crit?5:2.5);
+  t.atkCd = Math.max(t.atkCd, .35);
+}
+function playerSkill(){
+  const sk = CLASSES[G.cls].skill;
+  if (G.mp < sk.cost){ toast('法力不足'); return; }
+  if (sk.type==='ranged'){
+    const t = nearestEnemy(6.5);
+    if (!t){ toast('附近没有敌人'); return; }
+    G.mp -= sk.cost; sfx.skill();
+    projectiles.push({ x:G.x*TILE+8, y:G.y*TILE+8, tx:t.x*TILE+8, ty:t.y*TILE+8, spd:300, dmg:Math.round(G.atk*sk.mult), color:'#ff9a3a', r:5 });
+  } else {
+    const t = nearestEnemy(2.3);
+    if (!t){ toast('技能需要靠近敌人'); return; }
+    G.mp -= sk.cost; sfx.skill(); shake(4);
+    const dmg = Math.round(G.atk*sk.mult*rand(.92,1.1) - t.def*0.4);
+    hitEnemy(t, dmg, false, '#ffb54a');
+    spawnParticles(t.x*TILE+8, t.y*TILE+8, 14, '#ff9a3a');
+  }
+  updateHUD();
+}
+function playerUlt(){
+  const u = CLASSES[G.cls].ult;
+  if (G.ultCd > 0){ toast('绝技冷却中'); return; }
+  if (G.mp < u.cost){ toast('法力不足'); return; }
+  G.mp -= u.cost; G.ultCd = u.cd; sfx.ult(); shake(9);
+  if (u.type==='buff'){
+    G.buffT = 8; toast('战吼 · 攻防提升');
+    spawnParticles(G.x*TILE+8, G.y*TILE+8, 20, '#ffcc66');
+  } else if (u.type==='nova'){
+    let n=0;
+    for (const e of enemies){ if(!e.alive) continue;
+      const d = Math.hypot(e.x-G.x, e.y-G.y);
+      if (d<=5.5){ hitEnemy(e, Math.round(G.atk*u.mult), false, '#8fd0ff'); e.slowT=4; spawnParticles(e.x*TILE+8,e.y*TILE+8,10,'#9fe0ff'); n++; } }
+    if(!n) toast('周围没有敌人');
+  } else if (u.type==='volley'){
+    const list = enemies.filter(e=>e.alive && Math.hypot(e.x-G.x,e.y-G.y)<=6).sort((a,b)=>Math.hypot(a.x-G.x,a.y-G.y)-Math.hypot(b.x-G.x,b.y-G.y)).slice(0,4);
+    if(!list.length){ toast('附近没有敌人'); G.mp += u.cost; G.ultCd=0; return; }
+    list.forEach((e,i)=>setTimeout(()=>{ if(e.alive){ hitEnemy(e, Math.round(G.atk*u.mult*rand(.9,1.15)), chance(G.crit), '#f0a0ff'); spawnParticles(e.x*TILE+8,e.y*TILE+8,8,'#f0a0ff'); } }, i*90));
+  }
+  updateHUD();
+}
+function hitEnemy(t, dmg, crit, col){
+  if (!t.alive) return;
+  t.hp -= dmg; t.hurtT = .3;
+  addFloat(t.x*TILE+8, t.y*TILE-2, '-'+dmg, crit?'#ffd54a':'#ff6a5a', crit);
+  sfx[crit?'crit':'hit']();
+  if (t.hp<=0) killEnemy(t);
+}
+function killEnemy(e){
+  e.alive = false;
+  G.xp += e.xp; G.gold += e.gold; G.kills++;
+  addFloat(e.x*TILE+8, e.y*TILE-6, '+' + e.xp, '#8fd08c');
+  addFloat(e.x*TILE+8, e.y*TILE-16, '+' + e.gold, '#ffcc66');
+  sfx.die();
+  // 图鉴
+  if (!G.codex[e.type]){ G.codex[e.type] = (G.codex[e.type]||0)+1; }
+  else G.codex[e.type]++;
+  dropLoot(e.x, e.y, e);
+  if (e.guardian){
+    sfx.portal();
+    onGuardianDefeated(G.area);
+  }
+  checkLevel();
+  checkAchievements();
+  updateQuestProgress();
+  save();
+}
+function checkLevel(){
+  while (G.xp >= G.xpNext){
+    G.xp -= G.xpNext; G.lv++;
+    G.xpNext = Math.round(G.xpNext * 1.42);
+    G.maxHp += 10; G.maxMp += 5; G.baseAtk += 2; G.baseDef += 1;
+    G.hp = G.maxHp; G.mp = G.maxMp;
+    recalc(true);
+    sfx.level();
+    addFloat(G.x*TILE+8, G.y*TILE-10, 'Lv ' + G.lv, '#ffd54a', true);
+    toast('升级！Lv ' + G.lv);
+  }
+}
+function enemyAttack(e){
+  let dmg = Math.max(1, Math.round(e.atk*rand(.85,1.15) - G.def*0.5));
+  if (G.buffT>0) dmg = Math.round(dmg*0.6);
+  G.hp -= dmg; sfx.hurt(); shake(3);
+  addFloat(G.x*TILE+8, G.y*TILE-4, '-'+dmg, '#ff6a5a');
+  if (G.hp<=0){ G.hp=0; gameOver(); }
+  updateHUD();
+}
+
+/* ============================================================
+   移动
+   ============================================================ */
+let moveDir = { up:false, down:false, left:false, right:false };
+function setDir(k,v){
+  moveDir[k]=v;
+  if (v){
+    if (k==='up'||k==='down'){ moveDir.left=false; moveDir.right=false; }
+    else { moveDir.up=false; moveDir.down=false; }
+  }
+}
+function updatePlayer(dt){
+  const spd = 4.4 * G.spd;
+  let dx=0, dy=0;
+  if (moveDir.up) dy=-1; if (moveDir.down) dy=1;
+  if (moveDir.left) dx=-1; if (moveDir.right) dx=1;
+  G.moving = (dx!==0||dy!==0);
+  if (dx!==0||dy!==0){
+    if (dy<0) G.facing='up'; else if (dy>0) G.facing='down';
+    else if (dx<0) G.facing='left'; else G.facing='right';
+    const mag=Math.hypot(dx,dy);
+    G.px += dx/mag*spd*dt; G.py += dy/mag*spd*dt;
+    const tx=Math.round(G.px), ty=Math.round(G.py);
+    if (tx!==G.x){ if (canStand(tx,G.y)) G.x=tx; else G.px=G.x; }
+    if (ty!==G.y){ if (canStand(G.x,ty)) G.y=ty; else G.py=G.y; }
+  }
+  checkPortal();
+}
+
+/* ============================================================
+   区域加载 / 传送门 / 章节推进
+   ============================================================ */
+function loadArea(idx, showIntro){
+  G.area = idx; G.visited[idx]=true;
+  G.x = AREAS[idx].entrance.x; G.y = AREAS[idx].entrance.y;
+  G.px = G.x; G.py = G.y;
+  spawnEnemies();
+  updateHUD();
+  if (showIntro && idx>=0 && idx<CHAPTER_INTRO.length && !G.seenIntro['ch'+idx]){
+    G.seenIntro['ch'+idx]=true;
+    showCutscene(CHAPTER_INTRO[idx], () => {});
+  }
+}
+function checkPortal(){
+  const A = AREAS[G.area];
+  if (G.x===A.exit.x && G.y===A.exit.y){
+    const gd = bossRef;
+    if (gd && gd.alive && G.area < AREAS.length-1){
+      // 需先击败守护者才能离开（最终章除外）
+      toast('守护者未败 · 无法离开');
+      G.px=G.x; G.py=G.y; moveDir.up=moveDir.down=moveDir.left=moveDir.right=false;
+      return;
+    }
+    if (G.area < AREAS.length-1){
+      sfx.portal();
+      const next = G.area+1;
+      G.chapter = next+1;
+      loadArea(next, true);
+      toast('进入 ' + AREAS[next].name);
+    } else {
+      // 最后一章出口 → 结局（需要击败暗影之王）
+      if (G.seenIntro['boss4']) endGame();
+    }
+  }
+}
+function onGuardianDefeated(area){
+  G.seenIntro['boss'+area] = true;
+  G.guardiansDefeated++;
+  const q = G.quests.q_main;
+  if (q && q.steps[area]) q.steps[area].done = true;
+  // 成就
+  if (area===0) unlock('chapter1');
+  if (area===4){ unlock('chapter5'); G.finalCleared=true; }
+  bossRef = null;
+  updateQuestProgress();
+  // 章节完成演出
+  const isFinal = (area===4);
+  if (isFinal){
+    endGame();
+  } else {
+    toast('守护者已败 · 继续前行');
+  }
+}
+
+/* ============================================================
+   任务 / 成就 / 图鉴
+   ============================================================ */
+function updateQuestProgress(){
+  const slay = G.quests.q_slay;
+  const codex = G.quests.q_codex;
+  const gear = G.quests.q_gear;
+  if (gear && !gear.done && G.weapon && G.armor){ gear.done=true; G.questsDone++; toast('支线完成：武装自己'); }
+}
+function checkAchievements(){
+  if (G.kills>=1) unlock('first_blood');
+  if (G.lv>=5) unlock('lv5');
+  if (G.lv>=10) unlock('lv10');
+  if (G.kills>=100) unlock('slayer');
+  if (G.gold>=1000) unlock('rich');
+  if (Object.keys(G.codex).length>=8) unlock('codex8');
+}
+function unlock(id){
+  if (G.achievements[id]) return;
+  const a = ACHIEVEMENTS.find(x=>x.id===id);
+  if (!a) return;
+  G.achievements[id]=true;
+  sfx.achievement();
+  toast('成就达成 · ' + a.name);
+}
+
+/* ============================================================
+   渲染
+   ============================================================ */
+function drawTile(idx, gx, gy, flipX, scale){
+  const atlas = getAtlas();
+  if (!atlas || !atlas.complete || atlas.naturalWidth===0) return;
+  const sx=(idx%ATLAS_COLS)*ATLAS_ROW, sy=Math.floor(idx/ATLAS_COLS)*ATLAS_ROW;
+  const s=scale||1, dw=PX*s, dh=PX*s;
+  const dx=gx*PX+(PX-dw)/2, dy=gy*PX+(PX-dh)/2;
+  if (flipX){ ctx.save(); ctx.translate(dx+dw/2,dy+dh/2); ctx.scale(-1,1); ctx.drawImage(atlas,sx,sy,16,16,-dw/2,-dh/2,dw,dh); ctx.restore(); }
+  else ctx.drawImage(atlas,sx,sy,16,16,dx,dy,dw,dh);
+}
+const PLAYER_SPRITE = { warrior:64, mage:65, rogue:120 };
+function drawPlayer(gx, gy, facing){
+  const atlas = getAtlas();
+  const x=gx*PX, y=gy*PX;
+  ctx.save();
+  ctx.globalAlpha=.28; ctx.fillStyle='#000';
+  ctx.beginPath(); ctx.ellipse(x+PX/2, y+PX-3, 11, 5, 0, 0, 7); ctx.fill();
+  ctx.restore();
+  let idx = PLAYER_SPRITE[G.cls];
+  const flip = facing==='left';
+  const bob = G.moving ? Math.sin(performance.now()/140)*1.5 : 0;
+  drawBaseTile(idx, x, y+bob, flip);
+  // 提灯辉光
+  const t = performance.now()/600;
+  const gr = ctx.createRadialGradient(x+PX/2, y+PX/2, 2, x+PX/2, y+PX/2, 46+Math.sin(t)*5);
+  gr.addColorStop(0,'rgba(255,196,110,.28)'); gr.addColorStop(1,'rgba(255,196,110,0)');
+  ctx.fillStyle=gr; ctx.fillRect(x-40,y-40,PX+80,PX+80);
+}
+function drawBaseTile(idx, dx, dy, flip){
+  const atlas=getAtlas(); if(!atlas||!atlas.complete||atlas.naturalWidth===0) return;
+  const sx=(idx%ATLAS_COLS)*ATLAS_ROW, sy=Math.floor(idx/ATLAS_COLS)*ATLAS_ROW;
+  if (flip){ ctx.save(); ctx.translate(dx+PX/2,dy+PX/2); ctx.scale(-1,1); ctx.drawImage(atlas,sx,sy,16,16,-PX/2,-PX/2,PX,PX); ctx.restore(); }
+  else ctx.drawImage(atlas,sx,sy,16,16,dx,dy,PX,PX);
+}
+function drawEnemy(e){
+  const x=e.x*PX, y=e.y*PX;
+  ctx.save();
+  ctx.globalAlpha=.3; ctx.fillStyle='#000';
+  ctx.beginPath(); ctx.ellipse(x+PX/2, y+PX-2, e.boss?15:9, e.boss?6:4, 0,0,7); ctx.fill();
+  ctx.restore();
+  if (e.hurtT>0){ ctx.save(); ctx.globalCompositeOperation='lighter'; }
+  const wob = e.boss ? 0 : Math.sin(performance.now()/220 + e.wob)*1.2;
+  drawBaseTile(e.sprite, x, y+wob, false);
+  if (e.hurtT>0){
+    ctx.globalAlpha=.6; ctx.fillStyle='#fff';
+    ctx.fillRect(x+4,y+4,PX-8,PX-8);
+    ctx.restore();
+  }
+  // 血条
+  if (e.hp < e.maxHp || e.boss){
+    const w = e.boss?PX+14:26, bw=Math.max(0, e.hp/e.maxHp);
+    const bx=x+PX/2-w/2, by=y-(e.boss?10:6);
+    ctx.fillStyle='rgba(0,0,0,.6)'; ctx.fillRect(bx-1,by-1,w+2,5);
+    ctx.fillStyle=e.boss?'#c8102e':'#d1543f'; ctx.fillRect(bx,by,w*bw,3);
+  }
+}
+function drawWorld(){
+  const A = AREAS[G.area];
+  // 相机跟随（居中于玩家）
+  cam.x = clamp(G.px - VIEW.w/2 + .5, 0, MAP_W - VIEW.w);
+  cam.y = clamp(G.py - VIEW.h/2 + .5, 0, MAP_H - VIEW.h);
+  const ox = Math.floor(cam.x), oy = Math.floor(cam.y);
+  ctx.imageSmoothingEnabled=false;
+  // 背景
+  ctx.fillStyle = A.bg; ctx.fillRect(0,0,canvas.width,canvas.height);
+  // 地面 + 墙
+  const atlas=getAtlas();
+  for (let gy=0; gy<VIEW.h+1; gy++)
+    for (let gx=0; gx<VIEW.w+1; gx++){
+      const wx=ox+gx, wy=oy+gy;
+      if (wx<0||wy<0||wx>=MAP_W||wy>=MAP_H) continue;
+      const isWall = world[G.area][wy][wx]===1;
+      const px=(wx-cam.x)*PX, py=(wy-cam.y)*PX;
+      // 地面棋盘微变
+      ctx.fillStyle = ((wx+wy)%2===0) ? A.g[0] : A.g[1];
+      ctx.fillRect(Math.round(px), Math.round(py), PX, PX);
+      if (isWall){
+        ctx.fillStyle = A.wall;
+        ctx.fillRect(Math.round(px), Math.round(py), PX, PX);
+        ctx.fillStyle='rgba(0,0,0,.28)';
+        ctx.fillRect(Math.round(px), Math.round(py)+PX-6, PX, 6);
+        ctx.fillStyle='rgba(255,255,255,.05)';
+        ctx.fillRect(Math.round(px), Math.round(py), PX, 3);
+      }
+    }
+  // 入口 / 出口标记
+  const drawMarker=(mx,my,col,txt)=>{
+    const px=(mx-cam.x)*PX, py=(my-cam.y)*PX;
+    if (px<-PX||py<-PX||px>canvas.width||py>canvas.height) return;
+    const t=performance.now()/500;
+    ctx.save(); ctx.globalAlpha=.55+Math.sin(t)*.25;
+    ctx.strokeStyle=col; ctx.lineWidth=2;
+    ctx.strokeRect(px+2,py+2,PX-4,PX-4);
+    ctx.globalAlpha=1; ctx.fillStyle=col; ctx.font='9px sans-serif'; ctx.textAlign='center';
+    ctx.fillText(txt, px+PX/2, py-3);
+    ctx.restore();
+  };
+  if (G.area>0) drawMarker(A.entrance.x, A.entrance.y, '#8fd0ff', '入口');
+  drawMarker(A.exit.x, A.exit.y, '#ffcc66', G.area<AREAS.length-1?'前进':'终途');
+  // 掉落
+  for (const l of loots){
+    const px=(l.x-cam.x)*PX, py=(l.y-cam.y)*PX;
+    if (px<-PX||py<-PX||px>canvas.width||py>canvas.height) continue;
+    const bob=Math.sin(performance.now()/300+l.x)*2;
+    ctx.save(); ctx.globalAlpha=.3; ctx.fillStyle='#000';
+    ctx.beginPath(); ctx.ellipse(px+PX/2,py+PX-2,7,3,0,0,7); ctx.fill(); ctx.restore();
+    if (l.type==='gold'){
+      ctx.fillStyle='#ffcc55'; ctx.beginPath(); ctx.arc(px+PX/2,py+PX/2+bob,5,0,7); ctx.fill();
+      ctx.fillStyle='#fff3c0'; ctx.beginPath(); ctx.arc(px+PX/2-1.5,py+PX/2-1.5+bob,1.8,0,7); ctx.fill();
+    } else {
+      const it=ITEMS[l.item];
+      ctx.fillStyle='#f2d9b0'; ctx.fillRect(px+9,py+8+bob,14,14);
+      ctx.fillStyle='#a8623a'; ctx.font='bold 11px serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText(it?it.seal:'?', px+PX/2, py+PX/2+bob+1);
+      ctx.textBaseline='alphabetic';
+    }
+  }
+  // 敌人（远后排序）
+  const sorted = enemies.filter(e=>e.alive).sort((a,b)=>a.y-b.y);
+  for (const e of sorted) drawEnemy(e);
+  // 玩家
+  drawPlayer(G.px, G.py, G.facing);
+  // 投射物
+  for (const p of projectiles){
+    const px=(p.x/PX-cam.x)*PX, py=(p.y/PX-cam.y)*PX;
+    ctx.save(); ctx.globalCompositeOperation='lighter';
+    const gr=ctx.createRadialGradient(px,py,0,px,py,p.r*3);
+    gr.addColorStop(0,p.color); gr.addColorStop(1,'rgba(255,150,50,0)');
+    ctx.fillStyle=gr; ctx.beginPath(); ctx.arc(px,py,p.r*3,0,7); ctx.fill();
+    ctx.restore();
+  }
+  // 粒子
+  for (const p of particles){
+    const px=(p.x/PX-cam.x)*PX, py=(p.y/PX-cam.y)*PX;
+    ctx.globalAlpha=Math.max(0,p.life/p.max); ctx.fillStyle=p.color;
+    ctx.fillRect(px-1.5,py-1.5,3,3);
+  }
+  ctx.globalAlpha=1;
+  // 飘字
+  for (const f of floats){
+    const px=(f.x/PX-cam.x)*PX, py=(f.y/PX-cam.y)*PX - (1-f.life/f.max)*26;
+    ctx.globalAlpha=Math.min(1,f.life/f.max*1.4);
+    ctx.font=(f.big?'bold 15px':'bold 12px')+' -apple-system,serif';
+    ctx.textAlign='center';
+    ctx.fillStyle='#000'; ctx.fillText(f.txt, px+1, py+1);
+    ctx.fillStyle=f.color; ctx.fillText(f.txt, px, py);
+  }
+  ctx.globalAlpha=1;
+  // 氛围暗角 + 区域色
+  const vg = ctx.createRadialGradient(canvas.width/2, canvas.height/2, canvas.height*0.28, canvas.width/2, canvas.height/2, canvas.height*0.72);
+  vg.addColorStop(0,'rgba(0,0,0,0)'); vg.addColorStop(1,'rgba(0,0,0,.55)');
+  ctx.fillStyle=vg; ctx.fillRect(0,0,canvas.width,canvas.height);
+}
+
+/* ============================================================
+   飘字 / 粒子
+   ============================================================ */
+function addFloat(x,y,txt,color,big){ floats.push({x,y,txt,color,big:!!big,life:.9,max:.9}); }
+function spawnParticles(x,y,n,color){
+  for(let i=0;i<n;i++) particles.push({ x,y, vx:rand(-70,70), vy:rand(-90,-20), life:rand(.3,.6), max:.6, color });
+}
+function shake(v){ if(!G.settings.shake) return; shakeT = Math.max(shakeT, v); }
+
+/* ============================================================
+   主循环
+   ============================================================ */
+let lastT = 0;
+function loop(t){
+  const dt = Math.min(.05, (t-lastT)/1000 || 0); lastT=t;
+  if (G && G.started){
+    updatePlayer(dt);
+    updateEnemies(dt);
+    updateProjectiles(dt);
+    updateParticles(dt);
+    if (G.ultCd>0) G.ultCd = Math.max(0, G.ultCd-dt);
+    if (G.buffT>0) G.buffT = Math.max(0, G.buffT-dt);
+    // 法力自然回复
+    G.mp = Math.min(G.maxMp, G.mp + dt*0.7);
+    autoT = (autoT||0)+dt;
+    if (autoT > 2.5){ autoT=0; updateHUD(); }
+    render();
+    renderMinimap();
+  } else if (G && !G.started){
+    render();
+  }
+  requestAnimationFrame(loop);
+}
+let autoT=0;
+function updateEnemies(dt){
+  for (const e of enemies){
+    if (!e.alive) continue;
+    if (e.hurtT>0) e.hurtT=Math.max(0,e.hurtT-dt);
+    if (e.slowT>0) e.slowT=Math.max(0,e.slowT-dt);
+    if (e.atkCd>0) e.atkCd=Math.max(0,e.atkCd-dt);
+    const dist = Math.hypot(e.x-G.x, e.y-G.y);
+    const spd = e.spd * (e.slowT>0?0.4:1);
+    if (dist < e.aggro && dist > 1.05){
+      const dx=(G.x-e.x)/dist, dy=(G.y-e.y)/dist;
+      const nx=e.x+dx*spd*dt, ny=e.y+dy*spd*dt;
+      // 简单避墙
+      if (canStand(Math.round(nx), e.y)) e.x=nx;
+      else if (canStand(e.x, Math.round(ny))) e.y=ny;
+      else if (canStand(Math.round(nx), Math.round(ny))) { e.x=nx; e.y=ny; }
+    }
+    if (dist <= 1.05 && e.atkCd<=0){ enemyAttack(e); e.atkCd = e.boss?1.1:1.3; }
+  }
+}
+function updateProjectiles(dt){
+  for (let i=projectiles.length-1;i>=0;i--){
+    const p=projectiles[i];
+    const dx=p.tx-p.x, dy=p.ty-p.y, d=Math.hypot(dx,dy);
+    if (d<8){
+      const t = enemies.find(e=>e.alive && Math.abs(e.x*PX+8-p.tx)<16 && Math.abs(e.y*PX+8-p.ty)<16);
+      if (t) hitEnemy(t, p.dmg, chance(G.crit), '#ffb54a');
+      spawnParticles(p.tx, p.ty, 12, p.color);
+      projectiles.splice(i,1); continue;
+    }
+    p.x += dx/d*p.spd*dt; p.y += dy/d*p.spd*dt;
+  }
+}
+function updateParticles(dt){
+  for (let i=particles.length-1;i>=0;i--){
+    const p=particles[i];
+    p.x += p.vx*dt; p.y += p.vy*dt; p.vy += 160*dt; p.life -= dt;
+    if (p.life<=0) particles.splice(i,1);
+  }
+  for (let i=floats.length-1;i>=0;i--){ floats[i].life -= dt; if (floats[i].life<=0) floats.splice(i,1); }
+  for (let i=loots.length-1;i>=0;i--){ loots[i].life -= dt; if (loots[i].life<=0) loots.splice(i,1); }
+}
+function render(){
+  const sx = shakeT>0 ? rand(-shakeT,shakeT) : 0;
+  const sy = shakeT>0 ? rand(-shakeT,shakeT) : 0;
+  if (shakeT>0) shakeT = Math.max(0, shakeT - .6);
+  ctx.setTransform(1,0,0,1,sx,sy);
+  drawWorld();
+  ctx.setTransform(1,0,0,1,0,0);
+}
+function renderMinimap(){
+  const A=AREAS[G.area];
+  mctx.clearRect(0,0,mmCanvas.width,mmCanvas.height);
+  mctx.fillStyle='rgba(0,0,0,.3)'; mctx.fillRect(0,0,mmCanvas.width,mmCanvas.height);
+  const sx=mmCanvas.width/MAP_W, sy=mmCanvas.height/MAP_H;
+  for (let y=0;y<MAP_H;y++) for (let x=0;x<MAP_W;x++){
+    if (world[G.area][y][x]===1){ mctx.fillStyle='rgba(120,110,90,.5)'; mctx.fillRect(x*sx,y*sy,Math.ceil(sx),Math.ceil(sy)); }
+  }
+  // 出口
+  mctx.fillStyle='#ffcc66'; mctx.fillRect(A.exit.x*sx,A.exit.y*sy,3,3);
+  // 敌人
+  mctx.fillStyle='#d1543f';
+  for (const e of enemies){ if(e.alive && e.boss) mctx.fillRect(e.x*sx-1,e.y*sy-1,4,4); else if(e.alive) mctx.fillRect(e.x*sx,e.y*sy,2,2); }
+  // 玩家
+  mctx.fillStyle='#fff'; mctx.fillRect(G.x*sx-1,G.y*sy-1,3,3);
+}
+
+/* ============================================================
+   HUD
+   ============================================================ */
+function updateHUD(){
+  if (!G) return;
+  $('hpBar').style.width = clamp(G.hp/G.maxHp*100,0,100)+'%';
+  $('mpBar').style.width = clamp(G.mp/G.maxMp*100,0,100)+'%';
+  $('xpBar').style.width = clamp(G.xp/G.xpNext*100,0,100)+'%';
+  $('hpVal').textContent = Math.ceil(G.hp)+' / '+G.maxHp;
+  $('mpVal').textContent = Math.floor(G.mp)+' / '+G.maxMp;
+  $('xpVal').textContent = Math.floor(G.xp)+' / '+G.xpNext;
+  $('lvVal').textContent = G.lv;
+  $('locVal').textContent = AREAS[G.area].name;
+  $('goldVal').textContent = G.gold;
+  $('atkVal').textContent = G.atk;
+  $('mmName').textContent = AREAS[G.area].short;
+  const sk = CLASSES[G.cls].skill, ul = CLASSES[G.cls].ult;
+  $('skillName').textContent = sk.name + ' · ' + sk.cost;
+  $('ultName').textContent = G.ultCd>0 ? '冷却 '+Math.ceil(G.ultCd)+'s' : ul.name+' · '+ul.cost;
+  $('btnUlt').disabled = G.ultCd>0;
+  // 目标
+  const q = G.quests.q_main;
+  const step = q.steps.find(s=>!s.done);
+  if (step){ $('objective').style.display='block'; $('objText').textContent = step.d; }
+  else { $('objective').style.display='none'; }
+}
+function toast(msg){
+  if (!G || !G.settings.hints) return;
+  const el = $('floatHint'); el.textContent = msg; el.classList.add('show');
+  clearTimeout(el._t); el._t = setTimeout(()=>el.classList.remove('show'), 1600);
+}
+
+/* ============================================================
+   过场 / 结局 / 游戏结束
+   ============================================================ */
+let cutQueue = [], cutDone = null;
+function showCutscene(scene, done){
+  cutQueue = Array.isArray(scene)? scene.slice() : [scene];
+  cutDone = done || null;
+  const cs = $('cutscene'); cs.classList.add('show');
+  nextCut();
+}
+function nextCut(){
+  if (!cutQueue.length){
+    $('cutscene').classList.remove('show');
+    const d=cutDone; cutDone=null; if (d) d();
+    return;
+  }
+  const s = cutQueue.shift();
+  $('csKicker').textContent = s.k;
+  $('csText').textContent = s.t;
+}
+$('cutscene').addEventListener('click', nextCut);
+
+function gameOver(){
+  save();
+  sfx.gameover();
+  showDialog({ who:'提灯人', role:'SYSTEM', seal:'灭',
+    text:'你的灯火熄灭了。\n但提灯人的故事，从不因一次倒下而终结。\n\n若非最后一程，你可以在起点重新提灯。',
+    choices:[
+      { label:'在起点重燃明烛', hint:'死亡惩罚：回到本章入口，损失部分金币', act:()=>{
+        G.hp=G.maxHp; G.mp=G.maxMp;
+        G.gold = Math.max(0, G.gold - Math.round(G.gold*0.15));
+        G.x=AREAS[G.area].entrance.x; G.y=AREAS[G.area].entrance.y;
+        G.px=G.x; G.py=G.y; spawnEnemies(); updateHUD(); save();
+        toast('明烛重燃 · 回到入口');
+      }},
+      { label:'调息更久 · 满状态复活', hint:'保留金币，但需要更多耐心', act:()=>{
+        G.hp=G.maxHp; G.mp=G.maxMp;
+        G.x=AREAS[G.area].entrance.x; G.y=AREAS[G.area].entrance.y;
+        G.px=G.x; G.py=G.y; spawnEnemies(); updateHUD(); save();
+        toast('满状态 · 回到入口');
+      }},
+    ]});
+}
+function endGame(){
+  save();
+  $('endText').textContent = ENDING_TEXT;
+  const st = $('endStats');
+  st.innerHTML = '';
+  [['LV', G.lv], ['讨伐', G.kills], ['金币', G.gold], ['守护者', G.guardiansDefeated+'/5']].forEach(([l,n])=>{
+    const d=document.createElement('div'); d.className='end-stat';
+    d.innerHTML = '<div class="n num">'+n+'</div><div class="l">'+l+'</div>';
+    st.appendChild(d);
+  });
+  showModal('modalEnd');
+}
+
+/* ============================================================
+   弹窗系统
+   ============================================================ */
+function showModal(id){ $(id).classList.add('show'); }
+function hideModal(id){ $(id).classList.remove('show'); }
+function showDialog({who, role, seal, text, choices}){
+  $('dlgAvatar').textContent = seal||'影';
+  $('dlgWho').textContent = who||'';
+  $('dlgRole').textContent = role||'';
+  $('dlgText').textContent = text||'';
+  const box = $('dlgBtns'); box.innerHTML='';
+  (choices||[{label:'继续'}]).forEach(c=>{
+    const b=document.createElement('button'); b.className='choice';
+    b.innerHTML = c.label + (c.hint?'<span class="hint2">'+c.hint+'</span>':'');
+    b.onclick = ()=>{ sfx.menu(); hideModal('modalDialog'); if (c.act) c.act(); };
+    box.appendChild(b);
+  });
+  showModal('modalDialog');
+}
+
+/* 商店 */
+function openShop(){
+  const stock = SHOP_STOCK[clamp(G.area,0,SHOP_STOCK.length-1)];
+  $('shopGold').textContent = G.gold;
+  const list = $('shopList'); list.innerHTML='';
+  stock.forEach(id=>{
+    const it = ITEMS[id];
+    const can = G.gold >= it.price;
+    const row = document.createElement('div');
+    row.className = 'shop-row' + (can?'':' cant');
+    row.innerHTML = '<div class="s-ic">'+it.seal+'</div><div><div class="s-nm">'+it.name+'</div><div class="s-ds">'+it.desc+'</div></div><div class="s-price">'+it.price+' 金</div>';
+    row.onclick = ()=>{
+      if (G.gold < it.price){ toast('金币不足'); return; }
+      G.gold -= it.price; addItem(id); sfx.coin();
+      $('shopGold').textContent = G.gold; updateHUD();
+      toast('购得 ' + it.name); openShop();
+    };
+    list.appendChild(row);
+  });
+  showModal('modalShop');
+}
+function addItem(id){
+  G.inv[id] = (G.inv[id]||0)+1;
+}
+function useItem(id){
+  const it = ITEMS[id];
+  if (it.type==='consumable'){
+    if (it.heal) G.hp = Math.min(G.maxHp, G.hp + it.heal);
+    if (it.mp) G.mp = Math.min(G.maxMp, G.mp + it.mp);
+    G.inv[id]--; if (G.inv[id]<=0) delete G.inv[id];
+    sfx.potion(); updateHUD(); toast('使用了 ' + it.name);
+    openBag();
+  } else {
+    // 装备
+    const slot = it.type;
+    const cur = G[slot];
+    G[slot] = id;
+    delete G.inv[id];
+    if (cur) addItem(cur);
+    recalc(false); sfx.equip(); updateHUD(); toast('装备了 ' + it.name);
+    updateQuestProgress();
+    openBag();
+  }
+}
+function openBag(){
+  // 装备槽
+  const eq = $('eqSlots'); eq.innerHTML='';
+  [['weapon','武器'],['armor','护甲'],['ring','饰品']].forEach(([k,lab])=>{
+    const id=G[k]; const it=id?ITEMS[id]:null;
+    const d=document.createElement('div'); d.className='eq-slot'+(it?' on':'');
+    d.innerHTML='<div class="lab">'+lab+'</div><div class="val">'+(it?it.seal+' '+it.name.split('')[0]:(G[k]===null?'—':'—'))+'</div>';
+    if (it) d.title=it.desc;
+    d.onclick=()=>{ if(it){ /* 卸下 */ G[k]=null; addItem(id); recalc(false); updateHUD(); sfx.menu(); openBag(); } };
+    eq.appendChild(d);
+  });
+  const list = $('bagList'); list.innerHTML='';
+  const keys = Object.keys(G.inv);
+  if (!keys.length){ list.innerHTML = '<p class="dim" style="padding:10px 4px">行囊空空，去商店添置些物件吧。</p>'; }
+  keys.forEach(id=>{
+    const it=ITEMS[id];
+    const row=document.createElement('div'); row.className='shop-row';
+    row.innerHTML='<div class="s-ic">'+it.seal+'</div><div><div class="s-nm">'+it.name+' ×'+G.inv[id]+'</div><div class="s-ds">'+it.desc+'</div></div><div class="s-price">'+(it.type==='consumable'?'使用':'装备')+'</div>';
+    row.onclick=()=>useItem(id);
+    list.appendChild(row);
+  });
+  showModal('modalBag');
+}
+
+/* 见闻录 */
+let journalTab='quest';
+function openJournal(){
+  renderJournal(); showModal('modalJournal');
+}
+function renderJournal(){
+  const b=$('journalBody'); b.innerHTML='';
+  if (journalTab==='quest'){
+    const q=G.quests.q_main;
+    let h='<div class="quest"><div class="q-t">'+q.title+'</div><div class="q-d">';
+    q.steps.forEach((s,i)=>{ h += (s.done?'✔ ':'○ ')+s.d+'<br>'; });
+    h+='</div></div>';
+    // 支线
+    const slay=G.quests.q_slay, codex=G.quests.q_codex, gear=G.quests.q_gear;
+    const cx=Object.keys(G.codex).length;
+    h+='<div class="quest'+(slay.done?' done':'')+'"><div class="q-t">'+slay.title+'</div><div class="q-d">'+slay.desc+'</div><div class="q-s">'+Math.min(G.kills,slay.target)+' / '+slay.target+'</div></div>';
+    h+='<div class="quest'+(cx>=codex.target?' done':'')+'"><div class="q-t">'+codex.title+'</div><div class="q-d">'+codex.desc+'</div><div class="q-s">'+cx+' / '+codex.target+'</div></div>';
+    h+='<div class="quest'+(gear.done?' done':'')+'"><div class="q-t">'+gear.title+'</div><div class="q-d">'+gear.desc+'</div><div class="q-s">'+(gear.done?'已完成':'未完成')+'</div></div>';
+    b.innerHTML=h;
+  } else if (journalTab==='codex'){
+    let h='';
+    Object.keys(ENEMIES).forEach(k=>{
+      const e=ENEMIES[k], seen=G.codex[k]||0;
+      h+='<div class="quest"><div class="q-t">'+(seen?e.name:'？？？')+' <span class="badge '+(seen?'b-ok':'b-go')+'">'+(seen?('×'+seen):'未记录')+'</span></div>';
+      h+='<div class="q-d">'+(seen?e.lore:'尚未在图鉴中记录此魔物。')+'</div>';
+      if (seen) h+='<div class="q-s">HP '+e.hp+' · 攻 '+e.atk+' · XP '+e.xp+'</div>';
+      h+='</div>';
+    });
+    b.innerHTML=h;
+  } else {
+    let h='';
+    ACHIEVEMENTS.forEach(a=>{
+      const got=G.achievements[a.id];
+      h+='<div class="ach'+(got?' got':'')+'"><div class="a-b">'+a.seal+'</div><div><div class="q-t" style="font-size:13px">'+a.name+'</div><div class="q-d">'+a.desc+'</div></div></div>';
+    });
+    b.innerHTML=h;
+  }
+}
+
+/* 菜单 */
+function openMenu(){
+  $('menuInfo').textContent = G.className + ' · Lv ' + G.lv;
+  $('menuSkill').textContent = CLASSES[G.cls].skill.name;
+  $('menuUlt').textContent = CLASSES[G.cls].ult.name;
+  $('menuKill').textContent = '讨伐 ' + G.kills + ' · 守护者 ' + G.guardiansDefeated + '/5';
+  showModal('modalMenu');
+}
+
+/* ============================================================
+   交互
+   ============================================================ */
+function interact(){
+  const A = AREAS[G.area];
+  // 拾取
+  const l = loots.find(o=>Math.abs(o.x-G.x)<=1 && Math.abs(o.y-G.y)<=1);
+  if (l) { pickupLoot(l); return; }
+  // NPC
+  if (A.npc && Math.abs(A.npc.x-G.x)<=1 && Math.abs(A.npc.y-G.y)<=1){
+    sfx.npc();
+    if (A.npc.shop){ openShop(); return; }
+    showDialog({ who:A.npc.name, role:A.npc.role, seal:A.npc.seal, text:A.npc.lines.join('\n'), choices:[{label:'（继续赶路）'}] });
+    return;
+  }
+  // 商店区域：靠近出口/入口提示
+  toast('附近没有可交互的对象');
+}
+function pickupLoot(l){
+  if (l.type==='gold'){ G.gold += l.amt; sfx.coin(); toast('拾取 ' + l.amt + ' 金币'); }
+  else { addItem(l.item); sfx.pickup(); toast('拾取 ' + ITEMS[l.item].name); }
+  loots.splice(loots.indexOf(l),1);
+  updateHUD(); updateQuestProgress();
+}
+
+/* ============================================================
+   事件绑定
+   ============================================================ */
+function bind(){
+  // 方向键
+  document.querySelectorAll('#dpad button').forEach(b=>{
+    const d=b.dataset.d;
+    const on=e=>{ e.preventDefault(); setDir(d,true); };
+    const off=e=>{ e.preventDefault(); setDir(d,false); };
+    b.addEventListener('touchstart',on,{passive:false});
+    b.addEventListener('touchend',off); b.addEventListener('touchcancel',off);
+    b.addEventListener('mousedown',on); b.addEventListener('mouseup',off); b.addEventListener('mouseleave',off);
+  });
+  // 键盘
+  const keyMap={ ArrowUp:'up', ArrowDown:'down', ArrowLeft:'left', ArrowRight:'right', w:'up', s:'down', a:'left', d:'right', W:'up', S:'down', A:'left', D:'right' };
+  window.addEventListener('keydown',e=>{
+    if (!G||!G.started) return;
+    if (keyMap[e.key]){ e.preventDefault(); setDir(keyMap[e.key],true); }
+    if (e.key===' '){ e.preventDefault(); playerAttack(); }
+    if (e.key==='j'||e.key==='J'){ playerSkill(); }
+    if (e.key==='k'||e.key==='K'){ playerUlt(); }
+    if (e.key==='e'||e.key==='E'){ interact(); }
+  });
+  window.addEventListener('keyup',e=>{ if (keyMap[e.key]) setDir(keyMap[e.key],false); });
+  // 按钮
+  $('btnAttack').onclick = ()=>{ sfx.menu(); playerAttack(); };
+  $('btnSkill').onclick = ()=>{ playerSkill(); };
+  $('btnUlt').onclick = ()=>{ playerUlt(); };
+  $('btnInteract').onclick = ()=>{ interact(); };
+  $('btnMenu').onclick = ()=>{ sfx.menu(); openMenu(); };
+  $('btnJournal').onclick = ()=>{ sfx.menu(); openJournal(); };
+  $('btnJournal2').onclick = ()=>{ sfx.menu(); hideModal('modalMenu'); openJournal(); };
+  $('menuClose').onclick = ()=>hideModal('modalMenu');
+  $('journalClose').onclick = ()=>hideModal('modalJournal');
+  $('bagClose').onclick = ()=>hideModal('modalBag');
+  $('shopClose').onclick = ()=>hideModal('modalShop');
+  $('settingsClose').onclick = ()=>{ hideModal('modalSettings'); openMenu(); };
+  $('btnSave').onclick = ()=>{ save(); toast('进度已保存'); sfx.equip(); };
+  $('btnReset').onclick = ()=>{
+    showDialog({ who:'提灯人', role:'RESET', seal:'归', text:'确定要重新开始吗？\n当前进度将被清除，无法恢复。',
+      choices:[
+        { label:'确认重来', act:()=>{ try{localStorage.removeItem(SAVE_KEY);}catch(e){} location.reload(); } },
+        { label:'再想想' },
+      ]});
+  };
+  $('btnSettings').onclick = ()=>{ hideModal('modalMenu'); openSettings(); };
+  $('endBtn').onclick = ()=>{ hideModal('modalEnd'); toast('世界因你而长明'); };
+  // 见闻录 tabs
+  document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{
+    document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));
+    t.classList.add('on'); journalTab=t.dataset.tab; renderJournal();
+  });
+  // 职业选择
+  let chosen='warrior';
+  document.querySelectorAll('.cls').forEach(c=>c.onclick=()=>{
+    document.querySelectorAll('.cls').forEach(x=>x.classList.remove('sel'));
+    c.classList.add('sel'); chosen=c.dataset.cls; sfx.menu();
+  });
+  document.querySelector('.cls[data-cls="warrior"]').classList.add('sel');
+  $('btnNew').onclick = ()=>{ sfx.menu(); $('btnNew').style.display='none'; $('btnContinue').style.display='none'; $('classSelect').style.display='flex'; };
+  $('btnStartGame').onclick = ()=>{ sfx.portal(); buildWorld(); newGame(chosen); startFlow(); };
+  $('btnContinue').onclick = ()=>{ const s=load(); if(s){ G=s; buildWorld(); recalc(true); startFlow(); } };
+  // 设置开关
+  $('tgSound').onclick = ()=>{ G.settings.sound=!G.settings.sound; soundOn=G.settings.sound; $('tgSound').classList.toggle('on',G.settings.sound); };
+  $('tgShake').onclick = ()=>{ G.settings.shake=!G.settings.shake; $('tgShake').classList.toggle('on',G.settings.shake); };
+  $('tgHints').onclick = ()=>{ G.settings.hints=!G.settings.hints; $('tgHints').classList.toggle('on',G.settings.hints); };
+}
+function openSettings(){
+  $('tgSound').classList.toggle('on',G.settings.sound);
+  $('tgShake').classList.toggle('on',G.settings.shake);
+  $('tgHints').classList.toggle('on',G.settings.hints);
+  $('setVer').textContent = VERSION;
+  showModal('modalSettings');
+}
+
+/* 开始游戏流程：过场 → 主界面 */
+function startFlow(){
+  $('screen-title').style.display='none';
+  $('screen-game').style.display='flex';
+  soundOn = G.settings.sound;
+  updateHUD();
+  if (!G.seenIntro['prologue'] && G.lv===1 && G.kills===0){
+    G.seenIntro['prologue']=true;
+    showCutscene(PROLOGUE, ()=>{ updateHUD(); });
+  } else if (!G.seenIntro['ch0']){
+    G.seenIntro['ch0']=true;
+    showCutscene(CHAPTER_INTRO[0], ()=>{ updateHUD(); });
+  }
+  save();
+}
+function save(){
+  if (!G || !G.started) return;
+  try{ localStorage.setItem(SAVE_KEY, JSON.stringify(G)); }catch(e){}
+}
+function load(){
+  try{
+    const s = localStorage.getItem(SAVE_KEY);
+    if (!s) return null;
+    const d = JSON.parse(s);
+    if (!d || !d.started) return null;
+    // 兼容旧存档字段
+    if (!d.quests) d.quests = JSON.parse(JSON.stringify(QUESTS));
+    if (!d.settings) d.settings = { sound:true, shake:true, hints:true };
+    if (!d.codex) d.codex = {}; if (!d.achievements) d.achievements = {};
+    if (!d.seenIntro) d.seenIntro = {};
+    if (typeof d.guardiansDefeated!=='number') d.guardiansDefeated=0;
+    return d;
+  }catch(e){ return null; }
+}
+
+/* ============================================================
+   启动
+   ============================================================ */
+function boot(){
+  bind();
+  const s = load();
+  if (s){ $('btnContinue').style.display='block'; }
+  buildWorld();
+  // 启动标题画面下的空循环（渲染占位）
+  requestAnimationFrame(loop);
+  // 图集载入提示
+  loadAtlases(()=>{ /* ready */ });
+}
+boot();
+
+</script>
+</body>
+</html>
